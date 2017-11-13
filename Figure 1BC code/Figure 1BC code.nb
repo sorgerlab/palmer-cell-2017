@@ -1,0 +1,3923 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[    161504,       3915]
+NotebookOptionsPosition[    157728,       3802]
+NotebookOutlinePosition[    158388,       3827]
+CellTagsIndexPosition[    158345,       3824]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["Written in Wolfram Mathematica v11.0", "Section",
+ CellChangeTimes->{{3.685758315038992*^9, 3.685758344702688*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Image processing of clinical trials results\n",
+ StyleBox["Images are from Figure 1A (intent-to-treat population) of Larkin \
+et al, 2015, Combined Nivolumab and Ipilimumab or Monotherapy in Untreated \
+Melanoma, New England Journal of Medicine; ",
+  FontSize->16],
+ StyleBox["v373",
+  FontSize->16,
+  FontWeight->"Bold"],
+ StyleBox[":p23-34.\nResponses to Ipilimumab and Nivolumab were plotted in \
+Larkin et al. with dashed lines; to obtain data within dashes, the figure was \
+first processed in Adobe Illustrator to remove the line dashing option and \
+produce complete solid lines.",
+  FontSize->16]
+}], "Title",
+ CellChangeTimes->{{3.672497965247981*^9, 3.6724979704512787`*^9}, {
+  3.6837350070870395`*^9, 3.683735013342397*^9}, {3.6837368640472517`*^9, 
+  3.683736994951739*^9}, {3.683741424008066*^9, 3.683741532160252*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["Mapping the horizontal and vertical axes", "Section",
+ CellChangeTimes->{{3.665836524340968*^9, 3.6658365371306996`*^9}, {
+  3.6659693161008253`*^9, 3.665969331883728*^9}, {3.665974277804619*^9, 
+  3.6659742857400723`*^9}, {3.6837350208068237`*^9, 3.68373502632714*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"AxesImage", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\<Larkin combination.png\>\""}], ",", "\"\<PNG\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6617527551023235`*^9, 3.661752789569295*^9}, {
+   3.665761828889823*^9, 3.665761830548918*^9}, {3.665857875018008*^9, 
+   3.665857875136015*^9}, {3.6659693387031183`*^9, 3.6659693461085415`*^9}, 
+   3.6659742998008766`*^9, 3.6670920429709415`*^9, {3.672271192278209*^9, 
+   3.6722711952152185`*^9}, {3.683735041959034*^9, 3.6837350498634863`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"BinarizedAxesImage", "=", 
+   RowBox[{"Binarize", "[", 
+    RowBox[{"AxesImage", ",", "0.7"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"MaximumHeight", "=", "2600"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"MaximumWidth", "=", "6000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"ImageTake", "[", 
+    RowBox[{"BinarizedAxesImage", ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumHeight"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumWidth"}], "}"}]}], "]"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", "700", "}"}], ",", 
+      RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.661752790509349*^9, 3.6617528062992516`*^9}, {
+  3.6617528784913807`*^9, 3.661752878850402*^9}, {3.661753156689293*^9, 
+  3.6617532129375105`*^9}, {3.6617533868174553`*^9, 3.6617533868884597`*^9}, {
+  3.661753849297908*^9, 3.661753871450175*^9}, {3.6655348000713077`*^9, 
+  3.6655348135010757`*^9}, {3.665761844326706*^9, 3.6657619009639454`*^9}, {
+  3.665857893697076*^9, 3.665857903260623*^9}, {3.6659693612234063`*^9, 
+  3.6659693677177773`*^9}, {3.6659743120395765`*^9, 3.665974322598181*^9}, {
+  3.6670920541385803`*^9, 3.6670920761868415`*^9}, {3.672271207808259*^9, 
+  3.6722712197482977`*^9}, {3.683735135487384*^9, 3.683735165391094*^9}, {
+  3.6837360420312347`*^9, 3.683736054238933*^9}}],
+
+Cell["Vertical axis", "Subsubsection",
+ CellChangeTimes->{{3.683735893006711*^9, 3.683735896918935*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Extracting the subset of the image containing the \
+vertical tick marks", "Subsubsection"]], "Subsection",
+ CellChangeTimes->{{3.6617542614314804`*^9, 3.6617542694029365`*^9}, {
+  3.665836212973159*^9, 3.665836213431185*^9}, {3.6659696332919674`*^9, 
+  3.6659696339000025`*^9}, {3.6837352367191734`*^9, 3.683735249118883*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "manually", " ", "determined", " ", "positions", " ", "of", " ", "the", 
+    " ", "vertical", " ", "tick", " ", "marks", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "which", " ", "columns", " ", "of", " ", "pixels", " ", "contain", " ", 
+      "the", " ", "vertical", " ", "axis", " ", "ticks"}], ")"}]}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"VerticalAxisStart", "=", "230"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"VerticalAxisEnd", "=", "270"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ImageTake", "[", 
+      RowBox[{"BinarizedAxesImage", ",", 
+       RowBox[{"{", 
+        RowBox[{"1", ",", "MaximumHeight"}], "}"}], ",", " ", 
+       RowBox[{"{", 
+        RowBox[{"VerticalAxisStart", ",", "VerticalAxisEnd"}], "}"}]}], "]"}],
+      ",", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", "500", "}"}], ",", 
+        RowBox[{"{", "500", "}"}]}], "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.661753267986659*^9, 3.6617532689217124`*^9}, {
+  3.661753842657528*^9, 3.6617538428495393`*^9}, {3.665534828861954*^9, 
+  3.665534854861441*^9}, {3.6655348900214524`*^9, 3.6655348951017427`*^9}, {
+  3.6657619181029253`*^9, 3.6657620313474026`*^9}, {3.665857911913118*^9, 
+  3.6658579522894278`*^9}, {3.665969387268896*^9, 3.665969416573572*^9}, {
+  3.665974332228731*^9, 3.6659743917081337`*^9}, {3.667092080938113*^9, 
+  3.6670921451387854`*^9}, {3.6722712275183225`*^9, 3.67227127360947*^9}, {
+  3.683735173223542*^9, 3.6837352168470373`*^9}, {3.6837355359522886`*^9, 
+  3.6837355634788632`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "plotting", " ", "the", " ", "number", " ", "of", " ", "colored", " ", 
+    "pixels", " ", "per", " ", "row", " ", "in", " ", "the", " ", "subset", 
+    " ", "with", " ", "vertical", " ", "tick", " ", "marks"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"VerticalAxesMarks", "=", 
+     RowBox[{"1", "-", 
+      RowBox[{"ImageData", "[", 
+       RowBox[{"ImageTake", "[", 
+        RowBox[{"BinarizedAxesImage", ",", 
+         RowBox[{"{", 
+          RowBox[{"1", ",", "MaximumHeight"}], "}"}], ",", " ", 
+         RowBox[{"{", 
+          RowBox[{"VerticalAxisStart", ",", "VerticalAxisEnd"}], "}"}]}], 
+        "]"}], "]"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"Map", "[", 
+      RowBox[{"Total", ",", "VerticalAxesMarks"}], "]"}], ",", 
+     RowBox[{"Joined", "\[Rule]", "True"}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.661752960261058*^9, 3.661753067513192*^9}, {
+   3.661753101058111*^9, 3.6617531166260014`*^9}, {3.661753220019915*^9, 
+   3.6617532366888685`*^9}, {3.6617532786412683`*^9, 3.661753279001289*^9}, {
+   3.661753319489605*^9, 3.6617533750337815`*^9}, {3.6617538283307085`*^9, 
+   3.6617538285867233`*^9}, {3.6655348634459324`*^9, 3.665534867638172*^9}, {
+   3.665534902294154*^9, 3.6655349060693703`*^9}, 3.665762043905121*^9, {
+   3.665857956373661*^9, 3.665857962770027*^9}, 3.665969430405363*^9, 
+   3.6659744028297696`*^9, {3.667092151850169*^9, 3.667092161202704*^9}, 
+   3.6722712812724943`*^9, {3.683735222983388*^9, 3.683735290911273*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "gathering", " ", "adjacent", " ", "groups", " ", "of", " ", "colored", 
+    " ", "pixels"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"AdjacentVerticalTickMarks", "=", 
+     RowBox[{"Gather", "[", 
+      RowBox[{
+       RowBox[{"Select", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Range", "[", 
+             RowBox[{"Length", "[", "VerticalAxesMarks", "]"}], "]"}], ",", 
+            RowBox[{"Map", "[", 
+             RowBox[{"Total", ",", "VerticalAxesMarks"}], "]"}]}], "}"}], 
+          "\[Transpose]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], ">", 
+           "20"}], "&"}]}], "]"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Abs", "[", 
+          RowBox[{
+           RowBox[{
+           "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "-", 
+           RowBox[{
+           "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+          "]"}], "<", "15"}], "&"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"%", "//", "TableForm"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617534279698095`*^9, 3.661753466064988*^9}, {
+  3.661753664602344*^9, 3.661753805137382*^9}, {3.661753891946347*^9, 
+  3.6617539541219034`*^9}, {3.661753995353262*^9, 3.661753995650279*^9}, {
+  3.665534970134034*^9, 3.665534976805416*^9}, {3.6657620618701487`*^9, 
+  3.66576206206816*^9}, {3.665969437708781*^9, 3.6659694429650817`*^9}, {
+  3.665974415670504*^9, 3.665974416813569*^9}, {3.667092167650073*^9, 
+  3.667092167754079*^9}, {3.6837352941354575`*^9, 3.6837353034959927`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "marking", " ", "the", " ", "location", " ", "of", " ", "each", " ", 
+    "tick", " ", "mark", " ", "by", " ", "the", " ", "average", " ", 
+    "vertical", " ", "coordinate"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"VerticalTickPositions", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Map", "[", 
+       RowBox[{"Mean", ",", 
+        RowBox[{"AdjacentVerticalTickMarks", "\[LeftDoubleBracket]", 
+         RowBox[{
+          RowBox[{"1", ";;"}], ",", "All", ",", "1"}], 
+         "\[RightDoubleBracket]"}]}], "]"}], ",", 
+      RowBox[{"Reverse", "[", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Range", "[", "11", "]"}], "-", "1"}], ")"}], "*", "10"}], 
+       "]"}]}], "}"}], "\[Transpose]"}]}]}]], "Input",
+ CellChangeTimes->{{3.661753806399454*^9, 3.661753814217901*^9}, {
+  3.6617539683767185`*^9, 3.661754125793722*^9}, {3.6617542053032703`*^9, 
+  3.661754208130432*^9}, {3.6655349342609825`*^9, 3.665534954980168*^9}, {
+  3.665762117897353*^9, 3.665762158630683*^9}, {3.665857977175851*^9, 
+  3.665857981476097*^9}, {3.6659694517245827`*^9, 3.665969452052601*^9}, {
+  3.665969581862026*^9, 3.6659695820530367`*^9}, {3.665969642037468*^9, 
+  3.66596964312453*^9}, {3.665974423069927*^9, 3.665974437948778*^9}, {
+  3.6837353143996167`*^9, 3.683735328183405*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "fitting", " ", "a", " ", "straight", " ", "line", " ", "to", " ", "the", 
+    " ", "tick", " ", "marks", " ", "positions", " ", "and", " ", "the", " ", 
+    "numbers", " ", "on", " ", "their", " ", "labels"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"VerticalTicksFit", "=", 
+   RowBox[{"FindFit", "[", 
+    RowBox[{"VerticalTickPositions", ",", 
+     RowBox[{
+      RowBox[{"m", "*", "x"}], "+", "c"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"m", ",", "c"}], "}"}], ",", "x"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617541383184385`*^9, 3.661754165714006*^9}, {
+  3.6837353310235677`*^9, 3.6837353569760523`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"comparing", " ", "the", " ", "fit", " ", 
+    RowBox[{"(", 
+     RowBox[{"red", " ", "line"}], ")"}], " ", "with", " ", "the", " ", 
+    "positions", " ", "of", " ", "the", " ", "tick", " ", "marks", " ", 
+    RowBox[{"(", "black", ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Show", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ListPlot", "[", 
+     RowBox[{"VerticalTickPositions", ",", 
+      RowBox[{"PlotStyle", "\[Rule]", "Black"}], ",", 
+      RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+      RowBox[{"FrameLabel", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<pixel row\>\"", ",", "\"\<probability of PFS\>\""}], 
+        "}"}]}]}], "]"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"m", "*", "x"}], "+", "c"}], ")"}], "/.", 
+       "VerticalTicksFit"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "0", ",", "MaximumHeight"}], "}"}], ",", 
+      RowBox[{"PlotStyle", "\[Rule]", "Red"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.661754131021022*^9, 3.6617541352182617`*^9}, {
+  3.661754169386216*^9, 3.661754239139206*^9}, {3.6657621667221456`*^9, 
+  3.665762167613197*^9}, {3.665969589725476*^9, 3.6659695905735245`*^9}, {
+  3.6659744491654196`*^9, 3.6659744495574427`*^9}, {3.667092182226907*^9, 
+  3.667092182329912*^9}, {3.6722712952025404`*^9, 3.6722712952725406`*^9}, {
+  3.6837353618393297`*^9, 3.6837354307682724`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "position", " ", "of", " ", "the", " ", "zero", " ", "tick", " ", "mark", 
+    " ", 
+    RowBox[{"(", 
+     RowBox[{"0", "%", " ", "PFS"}], ")"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"ZeroSurvivalTickPosition", "=", 
+    RowBox[{"Round", "[", 
+     RowBox[{"x", "/.", 
+      RowBox[{
+       RowBox[{"Solve", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"m", "*", "x"}], "+", "c"}], ")"}], "/.", 
+            "VerticalTicksFit"}], ")"}], "\[Equal]", "0"}], ",", "x"}], "]"}],
+        "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "position", " ", "of", " ", "the", " ", "100", " ", "tick", " ", "mark", 
+     " ", 
+     RowBox[{"(", 
+      RowBox[{"100", "%", " ", "PFS"}], ")"}]}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"FullSurvivalTickPosition", "=", 
+    RowBox[{"Round", "[", 
+     RowBox[{"x", "/.", 
+      RowBox[{
+       RowBox[{"Solve", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"m", "*", "x"}], "+", "c"}], ")"}], "/.", 
+            "VerticalTicksFit"}], ")"}], "\[Equal]", "100"}], ",", "x"}], 
+        "]"}], "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+     "]"}]}]}]}]], "Input",
+ CellChangeTimes->{
+  3.6617547038657866`*^9, {3.6617547471942644`*^9, 3.661754765778328*^9}, {
+   3.6837354376226645`*^9, 3.6837354943039064`*^9}}],
+
+Cell["Horizontal axis", "Subsubsection",
+ CellChangeTimes->{{3.683735893006711*^9, 3.683735896918935*^9}, {
+  3.683735933655036*^9, 3.683735934703096*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Extracting the subset of the image containing the \
+horizontal tick marks", "Subsubsection"]], "Subsection",
+ CellChangeTimes->{{3.6617542614314804`*^9, 3.6617542694029365`*^9}, {
+  3.665836212973159*^9, 3.665836213431185*^9}, {3.6659696332919674`*^9, 
+  3.6659696339000025`*^9}, {3.6837352367191734`*^9, 3.683735249118883*^9}, {
+  3.6837359381192913`*^9, 3.68373593896734*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "manually", " ", "determined", " ", "positions", " ", "of", " ", "the", 
+    " ", "horizontal", " ", "tick", " ", "marks", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "which", " ", "rows", " ", "of", " ", "pixels", " ", "contain", " ", 
+      "the", " ", "horizontal", " ", "axis", " ", "ticks"}], ")"}]}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"HorizontalTickStart", "=", "2095"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"HorizontalTickEnd", "=", "2130"}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ImageTake", "[", 
+      RowBox[{"BinarizedAxesImage", ",", 
+       RowBox[{"{", 
+        RowBox[{"HorizontalTickStart", ",", "HorizontalTickEnd"}], "}"}], ",",
+        " ", 
+       RowBox[{"{", 
+        RowBox[{"1", ",", "MaximumWidth"}], "}"}]}], "]"}], ",", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", "1000", "}"}], ",", 
+        RowBox[{"{", "500", "}"}]}], "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.661753267986659*^9, 3.6617532689217124`*^9}, {
+  3.661753842657528*^9, 3.6617538428495393`*^9}, {3.6617542846258073`*^9, 
+  3.661754340562007*^9}, {3.665535004654009*^9, 3.665535072309879*^9}, {
+  3.6655351385736685`*^9, 3.665535139662731*^9}, {3.665535256797431*^9, 
+  3.6655352571094484`*^9}, {3.6657621885943966`*^9, 3.6657622411994057`*^9}, {
+  3.6658579902455983`*^9, 3.665858023403495*^9}, {3.665969661236566*^9, 
+  3.6659697112694273`*^9}, {3.665974456276827*^9, 3.665974515854234*^9}, {
+  3.6670921925944996`*^9, 3.6670922391301613`*^9}, {3.672271310730592*^9, 
+  3.67227135062072*^9}, {3.6837355082547045`*^9, 3.683735532807109*^9}, {
+  3.6837355782477083`*^9, 3.683735617287941*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "plotting", " ", "the", " ", "number", " ", "of", " ", "colored", " ", 
+    "pixels", " ", "per", " ", "column", " ", "in", " ", "the", " ", "subset",
+     " ", "with", " ", "horizontal", " ", "tick", " ", "marks"}], " ", "*)"}],
+   "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"HorizontalAxesMarks", "=", 
+     RowBox[{"1", "-", 
+      RowBox[{
+       RowBox[{"ImageData", "[", 
+        RowBox[{"ImageTake", "[", 
+         RowBox[{"BinarizedAxesImage", ",", 
+          RowBox[{"{", 
+           RowBox[{"HorizontalTickStart", ",", "HorizontalTickEnd"}], "}"}], 
+          ",", " ", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "MaximumWidth"}], "}"}]}], "]"}], "]"}], 
+       "\[Transpose]"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"Map", "[", 
+      RowBox[{"Total", ",", "HorizontalAxesMarks"}], "]"}], ",", 
+     RowBox[{"Joined", "\[Rule]", "True"}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.661752960261058*^9, 3.661753067513192*^9}, {
+   3.661753101058111*^9, 3.6617531166260014`*^9}, {3.661753220019915*^9, 
+   3.6617532366888685`*^9}, {3.6617532786412683`*^9, 3.661753279001289*^9}, {
+   3.661753319489605*^9, 3.6617533750337815`*^9}, {3.6617538283307085`*^9, 
+   3.6617538285867233`*^9}, {3.661754358490032*^9, 3.6617544221236715`*^9}, {
+   3.665535079462288*^9, 3.665535083054493*^9}, {3.6655351519504337`*^9, 
+   3.6655351529424906`*^9}, {3.6655352685021*^9, 3.665535270294203*^9}, 
+   3.6657622462016916`*^9, {3.6658580269847*^9, 3.6658580327140274`*^9}, 
+   3.6659697148836346`*^9, 3.665974523109649*^9, 3.6670922443224583`*^9, 
+   3.672271356160739*^9, {3.6837356299916677`*^9, 3.6837356590793314`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "gathering", " ", "adjacent", " ", "groups", " ", "of", " ", "colored", 
+    " ", "pixels"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"AdjacentHorizontalTickMarks", "=", 
+     RowBox[{"Gather", "[", 
+      RowBox[{
+       RowBox[{"Select", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Range", "[", 
+             RowBox[{"Length", "[", "HorizontalAxesMarks", "]"}], "]"}], ",", 
+            RowBox[{"Map", "[", 
+             RowBox[{"Total", ",", "HorizontalAxesMarks"}], "]"}]}], "}"}], 
+          "\[Transpose]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], ">", 
+           "10"}], "&"}]}], "]"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Abs", "[", 
+          RowBox[{
+           RowBox[{
+           "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "-", 
+           RowBox[{
+           "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+          "]"}], "<", "20"}], "&"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"%", "//", "TableForm"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617534279698095`*^9, 3.661753466064988*^9}, {
+  3.661753664602344*^9, 3.661753805137382*^9}, {3.661753891946347*^9, 
+  3.6617539541219034`*^9}, {3.661753995353262*^9, 3.661753995650279*^9}, {
+  3.6617543596180964`*^9, 3.661754360833166*^9}, {3.6617544465700703`*^9, 
+  3.6617544486101866`*^9}, {3.6655351625500402`*^9, 3.665535162877059*^9}, {
+  3.665535277341606*^9, 3.665535283565962*^9}, {3.6657622551482034`*^9, 
+  3.6657622553442144`*^9}, {3.665969724286172*^9, 3.665969728493413*^9}, {
+  3.6659745327331996`*^9, 3.6659745476280518`*^9}, {3.6670922523869195`*^9, 
+  3.667092257434208*^9}, {3.683735667535815*^9, 3.683735667776829*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "marking", " ", "the", " ", "location", " ", "of", " ", "each", " ", 
+    "tick", " ", "mark", " ", "by", " ", "the", " ", "average", " ", 
+    "horizontal", " ", "coordinate"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"HorizontalTickPositions", "=", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"Map", "[", 
+       RowBox[{"Mean", ",", 
+        RowBox[{"AdjacentHorizontalTickMarks", "\[LeftDoubleBracket]", 
+         RowBox[{
+          RowBox[{"1", ";;"}], ",", "All", ",", "1"}], 
+         "\[RightDoubleBracket]"}]}], "]"}], ",", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"Range", "[", "22", "]"}], "-", "1"}], ")"}], "*", "1"}]}], 
+     "}"}], "\[Transpose]"}]}]}]], "Input",
+ CellChangeTimes->{{3.661753806399454*^9, 3.661753814217901*^9}, {
+   3.6617539683767185`*^9, 3.661754125793722*^9}, {3.6617542053032703`*^9, 
+   3.661754208130432*^9}, {3.6617543616422124`*^9, 3.661754362114239*^9}, {
+   3.661754486857374*^9, 3.6617544906895933`*^9}, 3.661754523051444*^9, {
+   3.665535299212857*^9, 3.665535299340864*^9}, {3.665535348293664*^9, 
+   3.665535348381669*^9}, {3.6655355237096972`*^9, 3.6655355242857304`*^9}, {
+   3.6657622700120535`*^9, 3.66576227152814*^9}, {3.665858057218429*^9, 
+   3.665858068202057*^9}, {3.6659697460054145`*^9, 3.6659697471084776`*^9}, {
+   3.6659745533013763`*^9, 3.665974586012247*^9}, {3.6670922716420207`*^9, 
+   3.667092302026759*^9}, {3.6837356814636116`*^9, 3.683735687694968*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "fitting", " ", "a", " ", "straight", " ", "line", " ", "to", " ", "the", 
+    " ", "tick", " ", "marks", " ", "positions", " ", "and", " ", "the", " ", 
+    "numbers", " ", "on", " ", "their", " ", "labels"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"HorizontalTicksFit", "=", 
+   RowBox[{"FindFit", "[", 
+    RowBox[{"HorizontalTickPositions", ",", 
+     RowBox[{
+      RowBox[{"m", "*", "x"}], "+", "c"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"m", ",", "c"}], "}"}], ",", "x"}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617541383184385`*^9, 3.661754165714006*^9}, {
+  3.6617543627922783`*^9, 3.6617543633273087`*^9}, {3.683735700735714*^9, 
+  3.6837357009437256`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"comparing", " ", "the", " ", "fit", " ", 
+    RowBox[{"(", 
+     RowBox[{"red", " ", "line"}], ")"}], " ", "with", " ", "the", " ", 
+    "positions", " ", "of", " ", "the", " ", "tick", " ", "marks", " ", 
+    RowBox[{"(", "black", ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Show", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ListPlot", "[", 
+     RowBox[{"HorizontalTickPositions", ",", 
+      RowBox[{"PlotStyle", "\[Rule]", "Black"}], ",", 
+      RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+      RowBox[{"FrameLabel", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"\"\<pixel row\>\"", ",", "\"\<Time (months)\>\""}], 
+        "}"}]}]}], "]"}], ",", "\[IndentingNewLine]", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"m", "*", "x"}], "+", "c"}], ")"}], "/.", 
+       "HorizontalTicksFit"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "0", ",", "MaximumWidth"}], "}"}], ",", 
+      RowBox[{"PlotStyle", "\[Rule]", "Red"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellChangeTimes->{{3.661754131021022*^9, 3.6617541352182617`*^9}, {
+  3.661754169386216*^9, 3.661754239139206*^9}, {3.661754364016348*^9, 
+  3.661754364543378*^9}, {3.6617545329940133`*^9, 3.6617545344180946`*^9}, {
+  3.665535359302294*^9, 3.6655353595973105`*^9}, {3.6657622762334094`*^9, 
+  3.6657622818847322`*^9}, {3.6658580729473286`*^9, 3.665858075258461*^9}, {
+  3.6659697521657667`*^9, 3.6659697522607727`*^9}, {3.6659745915975666`*^9, 
+  3.6659745932616615`*^9}, {3.6670923088671503`*^9, 3.667092308954155*^9}, {
+  3.672271397411875*^9, 3.6722713975218754`*^9}, {3.6837357119033527`*^9, 
+  3.683735743415155*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"position", " ", "of", " ", "the", " ", "Time"}], "=", 
+    RowBox[{"0", " ", "tick", " ", "mark"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"TimeZeroTickPosition", "=", 
+   RowBox[{"Round", "[", 
+    RowBox[{"x", "/.", 
+     RowBox[{
+      RowBox[{"Solve", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"m", "*", "x"}], "+", "c"}], ")"}], "/.", 
+           "HorizontalTicksFit"}], ")"}], "\[Equal]", "0"}], ",", "x"}], 
+       "]"}], "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617546722009754`*^9, 3.6617546920021076`*^9}, {
+  3.6837357685435925`*^9, 3.6837357931990023`*^9}}],
+
+Cell[BoxData["TimeZeroTickPosition"], "Input",
+ CellChangeTimes->{{3.683736118221593*^9, 3.6837361182255926`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "this", " ", "function", " ", "takes", " ", "a", " ", "pixel", " ", 
+    "coordinate", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{
+      "number", " ", "of", " ", "pixels", " ", "to", " ", "the", " ", "right",
+        " ", "of", " ", "the", " ", "Time"}], "=", 
+      RowBox[{"0", " ", "point"}]}], ")"}], " ", "and", " ", "converts", " ", 
+    "it", " ", "to", " ", "a", " ", "number", " ", "of", " ", "months", " ", 
+    "of", " ", "PFS"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+   "SurvivingMonthsFromPixelCoordinate", "[", "numberofhorizontalpixels_", 
+    "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"m", "/.", "HorizontalTicksFit"}], ")"}], "*", 
+    "numberofhorizontalpixels"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617556549161835`*^9, 3.661755727329325*^9}, {
+  3.683735798336296*^9, 3.6837358577346935`*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Processing Ipilimumab response", "Section",
+ CellChangeTimes->{{3.6617545525351305`*^9, 3.6617545587624865`*^9}, {
+  3.6658362262369175`*^9, 3.665836226792949*^9}, {3.6658368345627117`*^9, 
+  3.6658368446732903`*^9}, {3.6659697620203304`*^9, 3.6659697700837917`*^9}, {
+  3.667092494785784*^9, 3.6670925065784583`*^9}, {3.6670927287941685`*^9, 
+  3.6670927369216337`*^9}, {3.667092873290433*^9, 3.6670928867942057`*^9}, {
+  3.6722714192719502`*^9, 3.6722714223929605`*^9}, {3.6837359519750843`*^9, 
+  3.683735957207383*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Mono1Image", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\<Larkin ipilimumab.png\>\""}], ",", "\"\<PNG\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.661754560811604*^9, 3.6617545735453324`*^9}, 
+   3.665535394697318*^9, 3.6657623147916145`*^9, {3.665858085677057*^9, 
+   3.6658580907223454`*^9}, {3.6659697804373837`*^9, 3.6659697813484364`*^9}, 
+   3.665974619918186*^9, {3.6670923237780027`*^9, 3.6670923258741226`*^9}, {
+   3.667092875666569*^9, 3.667092881497903*^9}, {3.6722714100919185`*^9, 
+   3.6722714109219213`*^9}, 3.6837359733823085`*^9, {3.683736006687213*^9, 
+   3.6837360108314505`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"BinarizedMono1Image", "=", 
+   RowBox[{"Binarize", "[", 
+    RowBox[{"Mono1Image", ",", "0.7"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"ImageTake", "[", 
+    RowBox[{"BinarizedMono1Image", ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumHeight"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumWidth"}], "}"}]}], "]"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", "700", "}"}], ",", 
+      RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6617545752804317`*^9, 3.661754603778062*^9}, {
+  3.6655354235659695`*^9, 3.6655354243170123`*^9}, {3.6657623444333105`*^9, 
+  3.6657623458783927`*^9}, {3.6658581031420555`*^9, 3.665858119955017*^9}, {
+  3.6659697928450937`*^9, 3.6659698003495226`*^9}, {3.6659746332769504`*^9, 
+  3.665974637366184*^9}, {3.667092334346607*^9, 3.6670923445701923`*^9}, {
+  3.672271438213017*^9, 3.672271448322049*^9}, {3.683735974125351*^9, 
+  3.6837359747493863`*^9}, {3.68373606677565*^9, 3.683736099903545*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"using", " ", "the", " ", "locations", " ", 
+    RowBox[{"of", " ", "'"}], 
+    RowBox[{"zero", "'"}], " ", "tick", " ", "marks", " ", "on", " ", 
+    "horizontal", " ", "and", " ", "vertical", " ", "axes", " ", "to", " ", 
+    "focus", " ", "on", " ", "the", " ", "relevant", " ", "portion", " ", 
+    "of", " ", "the", " ", "plot"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Mono1MappingImagePart", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ImageTake", "[", 
+      RowBox[{"BinarizedMono1Image", ",", 
+       RowBox[{"{", 
+        RowBox[{"FullSurvivalTickPosition", ",", "ZeroSurvivalTickPosition"}],
+         "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"TimeZeroTickPosition", ",", "MaximumWidth"}], "}"}]}], "]"}],
+      ",", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", "700", "}"}], ",", 
+        RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617546332027445`*^9, 3.6617546594212446`*^9}, {
+  3.661754722202835*^9, 3.6617547326104307`*^9}, {3.6617548018983936`*^9, 
+  3.661754825681754*^9}, {3.665535446165262*^9, 3.665535454852759*^9}, {
+  3.665535544405881*^9, 3.665535564037004*^9}, {3.6655358229978156`*^9, 
+  3.6655358278700943`*^9}, {3.6657623666315804`*^9, 3.6657624071658983`*^9}, {
+  3.6658581353638988`*^9, 3.6658581602363214`*^9}, {3.665858272371735*^9, 
+  3.6658582726897535`*^9}, {3.665969812941243*^9, 3.6659698315573077`*^9}, {
+  3.6659746536131134`*^9, 3.6659746801736326`*^9}, {3.667092361970187*^9, 
+  3.667092384554479*^9}, {3.6722714594330864`*^9, 3.6722714916341934`*^9}, {
+  3.683735974973399*^9, 3.6837359753254194`*^9}, {3.68373610821502*^9, 
+  3.6837361739597807`*^9}, {3.6837366487909393`*^9, 3.683736671927263*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Mono1MappingImageData", "=", 
+   RowBox[{"1", "-", 
+    RowBox[{"ImageData", "[", "Mono1MappingImagePart", "]"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6617548299329967`*^9, 3.6617548376894407`*^9}, {
+  3.661754872802449*^9, 3.661754872865453*^9}, {3.6837359755584326`*^9, 
+  3.6837359758054466`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "how", " ", "many", " ", "pixels", " ", "are", " ", "in", " ", "each", " ",
+     "row", " ", "between", " ", "the", " ", "axis", " ", "and", " ", "the", 
+    " ", "survival", " ", 
+    RowBox[{"function", "?"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"RunsOfConsecutiveElementsPerRow", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i", ",", 
+         RowBox[{"Map", "[", 
+          RowBox[{"Length", ",", 
+           RowBox[{"Split", "[", 
+            RowBox[{
+             RowBox[{
+             "Mono1MappingImageData", "\[LeftDoubleBracket]", "i", 
+              "\[RightDoubleBracket]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Chop", "[", 
+                RowBox[{"#2", "-", "#1"}], "]"}], "\[Equal]", "0"}], "&"}]}], 
+            "]"}]}], "]"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{
+         "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}]}], 
+        "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SurvivalPixelsPerRow", "=", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+           ",", 
+          RowBox[{"#", "\[LeftDoubleBracket]", 
+           RowBox[{"2", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], "&"}],
+        ",", 
+       RowBox[{"Select", "[", 
+        RowBox[{"RunsOfConsecutiveElementsPerRow", ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "[", 
+            RowBox[{
+            "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+            "]"}], ">", "2"}], "&"}]}], "]"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SurvivingMonthsPerPixelRow", "=", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"SurvivingMonthsFromPixelCoordinate", "[", 
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "]"}],
+           ",", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+            "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}], 
+            ")"}], "-", 
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}]}], 
+         "}"}], "&"}], ",", "SurvivalPixelsPerRow"}], "]"}]}], 
+    ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617551691413984`*^9, 3.6617551805540514`*^9}, {
+   3.6617552374183035`*^9, 3.6617552696021447`*^9}, {3.6617553055462008`*^9, 
+   3.6617553525138865`*^9}, {3.6655355875813503`*^9, 3.665535588406398*^9}, {
+   3.6655358413508654`*^9, 3.6655358424859304`*^9}, {3.665762429273163*^9, 
+   3.6657624320523214`*^9}, {3.6658581709839363`*^9, 
+   3.6658581735530834`*^9}, {3.665969840213803*^9, 3.66596984260594*^9}, {
+   3.665974687677062*^9, 3.6659746926143446`*^9}, {3.667092394498048*^9, 
+   3.6670923972752066`*^9}, {3.672271512684264*^9, 3.672271526395317*^9}, 
+   3.683735977349535*^9, {3.6837361456261597`*^9, 3.6837361565497847`*^9}, {
+   3.683736186672508*^9, 3.6837362023594055`*^9}, {3.6837363577442923`*^9, 
+   3.683736383271753*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"capping", " ", "'"}], 
+    RowBox[{"survival", "'"}], " ", "time", " ", "at", " ", "17", " ", 
+    "months", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "the", " ", "effective", " ", "end", " ", "of", " ", "the", " ", 
+      "data"}], ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"MaximumSurvivalMonths", "=", "17"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "building", " ", "a", " ", "survival", " ", "distribution", " ", "from", 
+     " ", "counts", " ", "of", " ", "pixels", " ", "in", " ", "each", " ", 
+     "row"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Mono1SurvivalDistribution", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i", ",", "\[IndentingNewLine]", 
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", "test", " ", "*)"}], 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"SurvivingMonthsPerPixelRow", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+                "\[Equal]", "i"}], "&"}]}], "]"}], "\[Equal]", 
+            RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"true", ";", " ", 
+             RowBox[{"no", " ", "progression", " ", "time", " ", "found"}]}], 
+            " ", "*)"}], "MaximumSurvivalMonths", ",", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"false", ";", " ", 
+             RowBox[{
+             "use", " ", "observed", " ", "progression", " ", "time"}]}], " ",
+             "*)"}], 
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"SurvivingMonthsPerPixelRow", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+                "\[Equal]", "i"}], "&"}]}], "]"}], "\[LeftDoubleBracket]", 
+            RowBox[{"1", ",", "1"}], "\[RightDoubleBracket]"}]}], 
+          "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{
+         "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}]}], 
+        "}"}]}], "]"}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.66175638636402*^9, 3.6617565377696795`*^9}, {
+   3.6617574965065165`*^9, 3.6617574965785203`*^9}, {3.665540291421395*^9, 
+   3.665540301270958*^9}, {3.6655405510622454`*^9, 3.665540551118249*^9}, {
+   3.665762489603614*^9, 3.6657624982441072`*^9}, {3.665858215342473*^9, 
+   3.6658582217108374`*^9}, {3.665969877732949*^9, 3.665969892805811*^9}, {
+   3.6659747809813986`*^9, 3.6659747842295847`*^9}, {3.6670924523223553`*^9, 
+   3.6670924738825884`*^9}, {3.672271512704264*^9, 3.672271526405317*^9}, {
+   3.6722722950343256`*^9, 3.672272297858487*^9}, 3.6837359775975494`*^9, {
+   3.6837361456351604`*^9, 3.6837361565587854`*^9}, {3.6837363203591547`*^9, 
+   3.683736352777008*^9}, {3.6837363887750673`*^9, 3.6837364107673254`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "plotting", " ", "the", " ", "resulting", " ", "survival", " ", 
+    "function"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"SurvivalFunction", "[", 
+      RowBox[{"EmpiricalDistribution", "[", 
+       RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+        RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "]"}], 
+     "[", "x", "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "16"}], "}"}], ",", 
+    RowBox[{"Exclusions", "\[Rule]", "None"}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "500", "}"}], ",", 
+       RowBox[{"{", "500", "}"}]}], "}"}]}], ",", 
+    RowBox[{"Frame", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Black", ",", 
+       RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+    RowBox[{"PlotRangePadding", "\[Rule]", "None"}], ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"0", ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameLabel", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Progression free survival (months)\>\"", ",", 
+       "\"\<Probability\>\""}], "}"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.6617565568187695`*^9, 3.661756586609473*^9}, {
+   3.6617567012100277`*^9, 3.6617567039141827`*^9}, {3.6617575073711376`*^9, 
+   3.661757508754217*^9}, {3.6655403125426025`*^9, 3.66554031406269*^9}, {
+   3.6657625087607093`*^9, 3.665762509520753*^9}, {3.66585822560006*^9, 
+   3.6658582256590633`*^9}, {3.665969899293182*^9, 3.665969899380187*^9}, {
+   3.665974791219984*^9, 3.665974791564004*^9}, {3.6670924630259676`*^9, 
+   3.667092463114972*^9}, {3.67227230349881*^9, 3.6722723036348176`*^9}, 
+   3.6837359794216537`*^9, {3.683736416055628*^9, 3.6837365763997993`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Processing Nivolumab response", "Section",
+ CellChangeTimes->{{3.6617545525351305`*^9, 3.6617545587624865`*^9}, {
+  3.6658362262369175`*^9, 3.665836226792949*^9}, {3.6658368345627117`*^9, 
+  3.6658368446732903`*^9}, {3.6659697620203304`*^9, 3.6659697700837917`*^9}, {
+  3.667092494785784*^9, 3.6670925065784583`*^9}, {3.6670927287941685`*^9, 
+  3.6670927369216337`*^9}, {3.667092873290433*^9, 3.6670928867942057`*^9}, {
+  3.6722714192719502`*^9, 3.6722714223929605`*^9}, {3.6837359519750843`*^9, 
+  3.683735957207383*^9}, {3.683736596790965*^9, 3.683736598239048*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Mono2Image", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\<Larkin nivolumab.png\>\""}], ",", "\"\<PNG\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.661754560811604*^9, 3.6617545735453324`*^9}, 
+   3.665535394697318*^9, 3.6657623147916145`*^9, {3.665858085677057*^9, 
+   3.6658580907223454`*^9}, {3.6659697804373837`*^9, 3.6659697813484364`*^9}, 
+   3.665974619918186*^9, {3.6670923237780027`*^9, 3.6670923258741226`*^9}, {
+   3.667092875666569*^9, 3.667092881497903*^9}, {3.6722714100919185`*^9, 
+   3.6722714109219213`*^9}, 3.6837359733823085`*^9, {3.683736006687213*^9, 
+   3.6837360108314505`*^9}, {3.6837366105577526`*^9, 3.6837366353831725`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"BinarizedMono2Image", "=", 
+   RowBox[{"Binarize", "[", 
+    RowBox[{"Mono2Image", ",", "0.7"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"ImageTake", "[", 
+    RowBox[{"BinarizedMono2Image", ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumHeight"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumWidth"}], "}"}]}], "]"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", "700", "}"}], ",", 
+      RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6617545752804317`*^9, 3.661754603778062*^9}, {
+  3.6655354235659695`*^9, 3.6655354243170123`*^9}, {3.6657623444333105`*^9, 
+  3.6657623458783927`*^9}, {3.6658581031420555`*^9, 3.665858119955017*^9}, {
+  3.6659697928450937`*^9, 3.6659698003495226`*^9}, {3.6659746332769504`*^9, 
+  3.665974637366184*^9}, {3.667092334346607*^9, 3.6670923445701923`*^9}, {
+  3.672271438213017*^9, 3.672271448322049*^9}, {3.683735974125351*^9, 
+  3.6837359747493863`*^9}, {3.68373606677565*^9, 3.683736099903545*^9}, {
+  3.683736610802767*^9, 3.683736611220791*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"using", " ", "the", " ", "locations", " ", 
+    RowBox[{"of", " ", "'"}], 
+    RowBox[{"zero", "'"}], " ", "tick", " ", "marks", " ", "on", " ", 
+    "horizontal", " ", "and", " ", "vertical", " ", "axes", " ", "to", " ", 
+    "focus", " ", "on", " ", "the", " ", "relevant", " ", "portion", " ", 
+    "of", " ", "the", " ", "plot"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Mono2MappingImagePart", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ImageTake", "[", 
+      RowBox[{"BinarizedMono2Image", ",", 
+       RowBox[{"{", 
+        RowBox[{"FullSurvivalTickPosition", ",", "ZeroSurvivalTickPosition"}],
+         "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"TimeZeroTickPosition", ",", "MaximumWidth"}], "}"}]}], "]"}],
+      ",", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", "700", "}"}], ",", 
+        RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617546332027445`*^9, 3.6617546594212446`*^9}, {
+  3.661754722202835*^9, 3.6617547326104307`*^9}, {3.6617548018983936`*^9, 
+  3.661754825681754*^9}, {3.665535446165262*^9, 3.665535454852759*^9}, {
+  3.665535544405881*^9, 3.665535564037004*^9}, {3.6655358229978156`*^9, 
+  3.6655358278700943`*^9}, {3.6657623666315804`*^9, 3.6657624071658983`*^9}, {
+  3.6658581353638988`*^9, 3.6658581602363214`*^9}, {3.665858272371735*^9, 
+  3.6658582726897535`*^9}, {3.665969812941243*^9, 3.6659698315573077`*^9}, {
+  3.6659746536131134`*^9, 3.6659746801736326`*^9}, {3.667092361970187*^9, 
+  3.667092384554479*^9}, {3.6722714594330864`*^9, 3.6722714916341934`*^9}, {
+  3.683735974973399*^9, 3.6837359753254194`*^9}, {3.68373610821502*^9, 
+  3.6837361739597807`*^9}, {3.683736611421802*^9, 3.683736611636814*^9}, {
+  3.6837366812547965`*^9, 3.683736681527812*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Mono2MappingImageData", "=", 
+   RowBox[{"1", "-", 
+    RowBox[{"ImageData", "[", "Mono2MappingImagePart", "]"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6617548299329967`*^9, 3.6617548376894407`*^9}, {
+  3.661754872802449*^9, 3.661754872865453*^9}, {3.6837359755584326`*^9, 
+  3.6837359758054466`*^9}, {3.683736611836826*^9, 3.6837366120218363`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "how", " ", "many", " ", "pixels", " ", "are", " ", "in", " ", "each", " ",
+     "row", " ", "between", " ", "the", " ", "axis", " ", "and", " ", "the", 
+    " ", "survival", " ", 
+    RowBox[{"function", "?"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"RunsOfConsecutiveElementsPerRow", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i", ",", 
+         RowBox[{"Map", "[", 
+          RowBox[{"Length", ",", 
+           RowBox[{"Split", "[", 
+            RowBox[{
+             RowBox[{
+             "Mono2MappingImageData", "\[LeftDoubleBracket]", "i", 
+              "\[RightDoubleBracket]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Chop", "[", 
+                RowBox[{"#2", "-", "#1"}], "]"}], "\[Equal]", "0"}], "&"}]}], 
+            "]"}]}], "]"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{
+         "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}]}], 
+        "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SurvivalPixelsPerRow", "=", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+           ",", 
+          RowBox[{"#", "\[LeftDoubleBracket]", 
+           RowBox[{"2", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], "&"}],
+        ",", 
+       RowBox[{"Select", "[", 
+        RowBox[{"RunsOfConsecutiveElementsPerRow", ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "[", 
+            RowBox[{
+            "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+            "]"}], ">", "2"}], "&"}]}], "]"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SurvivingMonthsPerPixelRow", "=", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"SurvivingMonthsFromPixelCoordinate", "[", 
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "]"}],
+           ",", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+            "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}], 
+            ")"}], "-", 
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}]}], 
+         "}"}], "&"}], ",", "SurvivalPixelsPerRow"}], "]"}]}], 
+    ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617551691413984`*^9, 3.6617551805540514`*^9}, {
+   3.6617552374183035`*^9, 3.6617552696021447`*^9}, {3.6617553055462008`*^9, 
+   3.6617553525138865`*^9}, {3.6655355875813503`*^9, 3.665535588406398*^9}, {
+   3.6655358413508654`*^9, 3.6655358424859304`*^9}, {3.665762429273163*^9, 
+   3.6657624320523214`*^9}, {3.6658581709839363`*^9, 
+   3.6658581735530834`*^9}, {3.665969840213803*^9, 3.66596984260594*^9}, {
+   3.665974687677062*^9, 3.6659746926143446`*^9}, {3.667092394498048*^9, 
+   3.6670923972752066`*^9}, {3.672271512684264*^9, 3.672271526395317*^9}, 
+   3.683735977349535*^9, {3.6837361456261597`*^9, 3.6837361565497847`*^9}, {
+   3.683736186672508*^9, 3.6837362023594055`*^9}, {3.6837363577442923`*^9, 
+   3.683736383271753*^9}, 3.683736612445861*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"capping", " ", "'"}], 
+    RowBox[{"survival", "'"}], " ", "time", " ", "at", " ", "17", " ", 
+    "months", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "the", " ", "effective", " ", "end", " ", "of", " ", "the", " ", 
+      "data"}], ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"MaximumSurvivalMonths", "=", "17"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "building", " ", "a", " ", "survival", " ", "distribution", " ", "from", 
+     " ", "counts", " ", "of", " ", "pixels", " ", "in", " ", "each", " ", 
+     "row"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Mono2SurvivalDistribution", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i", ",", "\[IndentingNewLine]", 
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", "test", " ", "*)"}], 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"SurvivingMonthsPerPixelRow", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+                "\[Equal]", "i"}], "&"}]}], "]"}], "\[Equal]", 
+            RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"true", ";", " ", 
+             RowBox[{"no", " ", "progression", " ", "time", " ", "found"}]}], 
+            " ", "*)"}], "MaximumSurvivalMonths", ",", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"false", ";", " ", 
+             RowBox[{
+             "use", " ", "observed", " ", "progression", " ", "time"}]}], " ",
+             "*)"}], 
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"SurvivingMonthsPerPixelRow", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+                "\[Equal]", "i"}], "&"}]}], "]"}], "\[LeftDoubleBracket]", 
+            RowBox[{"1", ",", "1"}], "\[RightDoubleBracket]"}]}], 
+          "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{
+         "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}]}], 
+        "}"}]}], "]"}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.66175638636402*^9, 3.6617565377696795`*^9}, {
+   3.6617574965065165`*^9, 3.6617574965785203`*^9}, {3.665540291421395*^9, 
+   3.665540301270958*^9}, {3.6655405510622454`*^9, 3.665540551118249*^9}, {
+   3.665762489603614*^9, 3.6657624982441072`*^9}, {3.665858215342473*^9, 
+   3.6658582217108374`*^9}, {3.665969877732949*^9, 3.665969892805811*^9}, {
+   3.6659747809813986`*^9, 3.6659747842295847`*^9}, {3.6670924523223553`*^9, 
+   3.6670924738825884`*^9}, {3.672271512704264*^9, 3.672271526405317*^9}, {
+   3.6722722950343256`*^9, 3.672272297858487*^9}, 3.6837359775975494`*^9, {
+   3.6837361456351604`*^9, 3.6837361565587854`*^9}, {3.6837363203591547`*^9, 
+   3.683736352777008*^9}, {3.6837363887750673`*^9, 3.6837364107673254`*^9}, 
+   3.683736612725877*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "plotting", " ", "the", " ", "resulting", " ", "survival", " ", 
+    "function"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"SurvivalFunction", "[", 
+      RowBox[{"EmpiricalDistribution", "[", 
+       RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+        RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "]"}], 
+     "[", "x", "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "16"}], "}"}], ",", 
+    RowBox[{"Exclusions", "\[Rule]", "None"}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "500", "}"}], ",", 
+       RowBox[{"{", "500", "}"}]}], "}"}]}], ",", 
+    RowBox[{"Frame", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Black", ",", 
+       RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+    RowBox[{"PlotRangePadding", "\[Rule]", "None"}], ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"0", ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameLabel", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Progression free survival (months)\>\"", ",", 
+       "\"\<Probability\>\""}], "}"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.6617565568187695`*^9, 3.661756586609473*^9}, {
+   3.6617567012100277`*^9, 3.6617567039141827`*^9}, {3.6617575073711376`*^9, 
+   3.661757508754217*^9}, {3.6655403125426025`*^9, 3.66554031406269*^9}, {
+   3.6657625087607093`*^9, 3.665762509520753*^9}, {3.66585822560006*^9, 
+   3.6658582256590633`*^9}, {3.665969899293182*^9, 3.665969899380187*^9}, {
+   3.665974791219984*^9, 3.665974791564004*^9}, {3.6670924630259676`*^9, 
+   3.667092463114972*^9}, {3.67227230349881*^9, 3.6722723036348176`*^9}, 
+   3.6837359794216537`*^9, {3.683736416055628*^9, 3.6837365763997993`*^9}, 
+   3.683736612925888*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Processing Combination response", "Section",
+ CellChangeTimes->{{3.6617545525351305`*^9, 3.6617545587624865`*^9}, {
+  3.6658362262369175`*^9, 3.665836226792949*^9}, {3.6658368345627117`*^9, 
+  3.6658368446732903`*^9}, {3.6659697620203304`*^9, 3.6659697700837917`*^9}, {
+  3.667092494785784*^9, 3.6670925065784583`*^9}, {3.6670927287941685`*^9, 
+  3.6670927369216337`*^9}, {3.667092873290433*^9, 3.6670928867942057`*^9}, {
+  3.6722714192719502`*^9, 3.6722714223929605`*^9}, {3.6837359519750843`*^9, 
+  3.683735957207383*^9}, {3.683736596790965*^9, 3.683736598239048*^9}, {
+  3.6837367127665987`*^9, 3.6837367143026867`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ComboImage", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\<Larkin combination.png\>\""}], ",", "\"\<PNG\>\""}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.661754560811604*^9, 3.6617545735453324`*^9}, 
+   3.665535394697318*^9, 3.6657623147916145`*^9, {3.665858085677057*^9, 
+   3.6658580907223454`*^9}, {3.6659697804373837`*^9, 3.6659697813484364`*^9}, 
+   3.665974619918186*^9, {3.6670923237780027`*^9, 3.6670923258741226`*^9}, {
+   3.667092875666569*^9, 3.667092881497903*^9}, {3.6722714100919185`*^9, 
+   3.6722714109219213`*^9}, 3.6837359733823085`*^9, {3.683736006687213*^9, 
+   3.6837360108314505`*^9}, {3.6837366105577526`*^9, 
+   3.6837366353831725`*^9}, {3.6837367220141277`*^9, 3.6837367331837664`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"BinarizedComboImage", "=", 
+   RowBox[{"Binarize", "[", 
+    RowBox[{"ComboImage", ",", "0.7"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", 
+  RowBox[{
+   RowBox[{"ImageTake", "[", 
+    RowBox[{"BinarizedComboImage", ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumHeight"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "MaximumWidth"}], "}"}]}], "]"}], ",", 
+   RowBox[{"ImageSize", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", "700", "}"}], ",", 
+      RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.6617545752804317`*^9, 3.661754603778062*^9}, {
+  3.6655354235659695`*^9, 3.6655354243170123`*^9}, {3.6657623444333105`*^9, 
+  3.6657623458783927`*^9}, {3.6658581031420555`*^9, 3.665858119955017*^9}, {
+  3.6659697928450937`*^9, 3.6659698003495226`*^9}, {3.6659746332769504`*^9, 
+  3.665974637366184*^9}, {3.667092334346607*^9, 3.6670923445701923`*^9}, {
+  3.672271438213017*^9, 3.672271448322049*^9}, {3.683735974125351*^9, 
+  3.6837359747493863`*^9}, {3.68373606677565*^9, 3.683736099903545*^9}, {
+  3.683736610802767*^9, 3.683736611220791*^9}, {3.683736722558159*^9, 
+  3.6837367230131845`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"using", " ", "the", " ", "locations", " ", 
+    RowBox[{"of", " ", "'"}], 
+    RowBox[{"zero", "'"}], " ", "tick", " ", "marks", " ", "on", " ", 
+    "horizontal", " ", "and", " ", "vertical", " ", "axes", " ", "to", " ", 
+    "focus", " ", "on", " ", "the", " ", "relevant", " ", "portion", " ", 
+    "of", " ", "the", " ", "plot"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"ComboMappingImagePart", "=", 
+   RowBox[{"Show", "[", 
+    RowBox[{
+     RowBox[{"ImageTake", "[", 
+      RowBox[{"BinarizedComboImage", ",", 
+       RowBox[{"{", 
+        RowBox[{"FullSurvivalTickPosition", ",", "ZeroSurvivalTickPosition"}],
+         "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"TimeZeroTickPosition", ",", "MaximumWidth"}], "}"}]}], "]"}],
+      ",", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", "700", "}"}], ",", 
+        RowBox[{"{", "700", "}"}]}], "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617546332027445`*^9, 3.6617546594212446`*^9}, {
+  3.661754722202835*^9, 3.6617547326104307`*^9}, {3.6617548018983936`*^9, 
+  3.661754825681754*^9}, {3.665535446165262*^9, 3.665535454852759*^9}, {
+  3.665535544405881*^9, 3.665535564037004*^9}, {3.6655358229978156`*^9, 
+  3.6655358278700943`*^9}, {3.6657623666315804`*^9, 3.6657624071658983`*^9}, {
+  3.6658581353638988`*^9, 3.6658581602363214`*^9}, {3.665858272371735*^9, 
+  3.6658582726897535`*^9}, {3.665969812941243*^9, 3.6659698315573077`*^9}, {
+  3.6659746536131134`*^9, 3.6659746801736326`*^9}, {3.667092361970187*^9, 
+  3.667092384554479*^9}, {3.6722714594330864`*^9, 3.6722714916341934`*^9}, {
+  3.683735974973399*^9, 3.6837359753254194`*^9}, {3.68373610821502*^9, 
+  3.6837361739597807`*^9}, {3.683736611421802*^9, 3.683736611636814*^9}, {
+  3.6837366812547965`*^9, 3.683736681527812*^9}, {3.6837367232291975`*^9, 
+  3.683736723437209*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ComboMappingImageData", "=", 
+   RowBox[{"1", "-", 
+    RowBox[{"ImageData", "[", "ComboMappingImagePart", "]"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6617548299329967`*^9, 3.6617548376894407`*^9}, {
+  3.661754872802449*^9, 3.661754872865453*^9}, {3.6837359755584326`*^9, 
+  3.6837359758054466`*^9}, {3.683736611836826*^9, 3.6837366120218363`*^9}, {
+  3.6837367236692224`*^9, 3.6837367239022355`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "how", " ", "many", " ", "pixels", " ", "are", " ", "in", " ", "each", " ",
+     "row", " ", "between", " ", "the", " ", "axis", " ", "and", " ", "the", 
+    " ", "survival", " ", 
+    RowBox[{"function", "?"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"RunsOfConsecutiveElementsPerRow", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i", ",", 
+         RowBox[{"Map", "[", 
+          RowBox[{"Length", ",", 
+           RowBox[{"Split", "[", 
+            RowBox[{
+             RowBox[{
+             "ComboMappingImageData", "\[LeftDoubleBracket]", "i", 
+              "\[RightDoubleBracket]"}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"Chop", "[", 
+                RowBox[{"#2", "-", "#1"}], "]"}], "\[Equal]", "0"}], "&"}]}], 
+            "]"}]}], "]"}]}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{
+         "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}]}], 
+        "}"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SurvivalPixelsPerRow", "=", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+           ",", 
+          RowBox[{"#", "\[LeftDoubleBracket]", 
+           RowBox[{"2", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], "&"}],
+        ",", 
+       RowBox[{"Select", "[", 
+        RowBox[{"RunsOfConsecutiveElementsPerRow", ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Length", "[", 
+            RowBox[{
+            "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+            "]"}], ">", "2"}], "&"}]}], "]"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SurvivingMonthsPerPixelRow", "=", 
+     RowBox[{"Map", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"SurvivingMonthsFromPixelCoordinate", "[", 
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "]"}],
+           ",", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+            "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}], 
+            ")"}], "-", 
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}]}], 
+         "}"}], "&"}], ",", "SurvivalPixelsPerRow"}], "]"}]}], 
+    ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617551691413984`*^9, 3.6617551805540514`*^9}, {
+   3.6617552374183035`*^9, 3.6617552696021447`*^9}, {3.6617553055462008`*^9, 
+   3.6617553525138865`*^9}, {3.6655355875813503`*^9, 3.665535588406398*^9}, {
+   3.6655358413508654`*^9, 3.6655358424859304`*^9}, {3.665762429273163*^9, 
+   3.6657624320523214`*^9}, {3.6658581709839363`*^9, 
+   3.6658581735530834`*^9}, {3.665969840213803*^9, 3.66596984260594*^9}, {
+   3.665974687677062*^9, 3.6659746926143446`*^9}, {3.667092394498048*^9, 
+   3.6670923972752066`*^9}, {3.672271512684264*^9, 3.672271526395317*^9}, 
+   3.683735977349535*^9, {3.6837361456261597`*^9, 3.6837361565497847`*^9}, {
+   3.683736186672508*^9, 3.6837362023594055`*^9}, {3.6837363577442923`*^9, 
+   3.683736383271753*^9}, 3.683736612445861*^9, 3.683736724237255*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"capping", " ", "'"}], 
+    RowBox[{"survival", "'"}], " ", "time", " ", "at", " ", "17", " ", 
+    "months", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "the", " ", "effective", " ", "end", " ", "of", " ", "the", " ", 
+      "data"}], ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"MaximumSurvivalMonths", "=", "17"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "building", " ", "a", " ", "survival", " ", "distribution", " ", "from", 
+     " ", "counts", " ", "of", " ", "pixels", " ", "in", " ", "each", " ", 
+     "row"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ComboSurvivalDistribution", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"i", ",", "\[IndentingNewLine]", 
+         RowBox[{"If", "[", "\[IndentingNewLine]", 
+          RowBox[{"(*", " ", "test", " ", "*)"}], 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"SurvivingMonthsPerPixelRow", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+                "\[Equal]", "i"}], "&"}]}], "]"}], "\[Equal]", 
+            RowBox[{"{", "}"}]}], ",", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"true", ";", " ", 
+             RowBox[{"no", " ", "progression", " ", "time", " ", "found"}]}], 
+            " ", "*)"}], "MaximumSurvivalMonths", ",", "\[IndentingNewLine]", 
+           RowBox[{"(*", " ", 
+            RowBox[{"false", ";", " ", 
+             RowBox[{
+             "use", " ", "observed", " ", "progression", " ", "time"}]}], " ",
+             "*)"}], 
+           RowBox[{
+            RowBox[{"Select", "[", 
+             RowBox[{"SurvivingMonthsPerPixelRow", ",", 
+              RowBox[{
+               RowBox[{
+                RowBox[{
+                "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], 
+                "\[Equal]", "i"}], "&"}]}], "]"}], "\[LeftDoubleBracket]", 
+            RowBox[{"1", ",", "1"}], "\[RightDoubleBracket]"}]}], 
+          "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{
+         "ZeroSurvivalTickPosition", "-", "FullSurvivalTickPosition"}]}], 
+        "}"}]}], "]"}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.66175638636402*^9, 3.6617565377696795`*^9}, {
+   3.6617574965065165`*^9, 3.6617574965785203`*^9}, {3.665540291421395*^9, 
+   3.665540301270958*^9}, {3.6655405510622454`*^9, 3.665540551118249*^9}, {
+   3.665762489603614*^9, 3.6657624982441072`*^9}, {3.665858215342473*^9, 
+   3.6658582217108374`*^9}, {3.665969877732949*^9, 3.665969892805811*^9}, {
+   3.6659747809813986`*^9, 3.6659747842295847`*^9}, {3.6670924523223553`*^9, 
+   3.6670924738825884`*^9}, {3.672271512704264*^9, 3.672271526405317*^9}, {
+   3.6722722950343256`*^9, 3.672272297858487*^9}, 3.6837359775975494`*^9, {
+   3.6837361456351604`*^9, 3.6837361565587854`*^9}, {3.6837363203591547`*^9, 
+   3.683736352777008*^9}, {3.6837363887750673`*^9, 3.6837364107673254`*^9}, 
+   3.683736612725877*^9, 3.683736724541272*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "plotting", " ", "the", " ", "resulting", " ", "survival", " ", 
+    "function"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"SurvivalFunction", "[", 
+      RowBox[{"EmpiricalDistribution", "[", 
+       RowBox[{"ComboSurvivalDistribution", "\[LeftDoubleBracket]", 
+        RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "]"}], 
+     "[", "x", "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "16"}], "}"}], ",", 
+    RowBox[{"Exclusions", "\[Rule]", "None"}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "500", "}"}], ",", 
+       RowBox[{"{", "500", "}"}]}], "}"}]}], ",", 
+    RowBox[{"Frame", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Black", ",", 
+       RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+    RowBox[{"PlotRangePadding", "\[Rule]", "None"}], ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"0", ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameLabel", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+      "\"\<Progression free survival (months)\>\"", ",", 
+       "\"\<Probability\>\""}], "}"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.6617565568187695`*^9, 3.661756586609473*^9}, {
+   3.6617567012100277`*^9, 3.6617567039141827`*^9}, {3.6617575073711376`*^9, 
+   3.661757508754217*^9}, {3.6655403125426025`*^9, 3.66554031406269*^9}, {
+   3.6657625087607093`*^9, 3.665762509520753*^9}, {3.66585822560006*^9, 
+   3.6658582256590633`*^9}, {3.665969899293182*^9, 3.665969899380187*^9}, {
+   3.665974791219984*^9, 3.665974791564004*^9}, {3.6670924630259676`*^9, 
+   3.667092463114972*^9}, {3.67227230349881*^9, 3.6722723036348176`*^9}, 
+   3.6837359794216537`*^9, {3.683736416055628*^9, 3.6837365763997993`*^9}, 
+   3.683736612925888*^9, 3.6837367262943726`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Comparing observed combination with prediction from independent drug action\
+\>", "Title",
+ CellChangeTimes->{{3.6758230663732977`*^9, 3.675823072493306*^9}, {
+  3.683736840631912*^9, 3.6837368530636234`*^9}, {3.6856673525864925`*^9, 
+  3.685667388112546*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[TextData[StyleBox["Randomly sampling monotherapy response distributions \
+with no correlation",
+ FontSize->24]], "Subsubsection",
+ CellChangeTimes->{{3.665837582426487*^9, 3.6658375929250875`*^9}, {
+  3.6658551281902575`*^9, 3.6658551325245056`*^9}, {3.665855574142762*^9, 
+  3.665855575900863*^9}, {3.6658556459988728`*^9, 3.665855651073163*^9}, {
+  3.665858582628481*^9, 3.6658585827064853`*^9}, {3.667141834858535*^9, 
+  3.667141834939539*^9}, {3.6720649574735966`*^9, 3.6720649575536013`*^9}, {
+  3.6722719233460665`*^9, 3.67227192340907*^9}, {3.68373703605509*^9, 
+  3.6837370474317403`*^9}, {3.683737290703655*^9, 3.68373729253576*^9}, {
+  3.6837403045600376`*^9, 3.6837403053280816`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "Simulate", " ", "5000", " ", "patients", " ", "receiving", " ", 
+     "combination", " ", 
+     RowBox[{"therapy", ":", " ", 
+      RowBox[{
+      "each", " ", "receives", " ", "a", " ", "randomly", " ", "sampled", " ",
+        "response", " ", "from", " ", "each", " ", "monotherapy", " ", 
+       "response", " ", "distribution"}]}]}], ",", " ", 
+    RowBox[{
+    "and", " ", "the", " ", "patients", " ", "duration", " ", "of", " ", 
+     "PFS", " ", "is", " ", "the", " ", "longer", " ", "of", " ", "the", " ", 
+     "two", " ", "sampled", " ", "responses", " ", 
+     RowBox[{"(", 
+      RowBox[{
+      "the", " ", "principle", " ", "of", " ", "independent", " ", "drug", 
+       " ", "action"}], ")"}]}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"UncorrelatedSamplesOfMonotherapyResponses", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Max", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"RandomChoice", "[", 
+          RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+           RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], ",", 
+         RowBox[{"RandomChoice", "[", 
+          RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+           RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], 
+        "}"}], "]"}], ",", 
+      RowBox[{"{", "5000", "}"}]}], "]"}]}], ";"}]}]], "Input",
+ CellChangeTimes->{{3.683737057160297*^9, 3.683737201945578*^9}, 
+   3.6837412094917965`*^9, {3.6845380843980827`*^9, 3.684538104761722*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ StyleBox["Randomly sampling monotherapy response distributions with partial \
+correlation",
+  FontSize->24],
+ "\nThis is achieved by starting with the two monotherapies response \
+distributions in a perfectly correlated joint distribution, and then adding a \
+random number (up to a user-specified size) to the rank (that is, row number) \
+of each entry. As the degree of rank-randomization increases, the rank \
+correlation decreases from 1 and approaches 0. Identifying the appropriate \
+value of the rank randomization parameter to produce a desired Spearman Rank \
+Correlation is matter of manual adjustment."
+}], "Subsubsection",
+ CellChangeTimes->{{3.683737272763629*^9, 3.6837373072476015`*^9}, {
+  3.683740279895627*^9, 3.68374054045653*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "how", " ", "many", " ", "repeats", " ", "of", " ", "the", " ", "complete",
+     " ", "data", " ", "set", " ", "to", " ", "merge", " ", "together", " ", 
+    RowBox[{"(", 
+     RowBox[{
+     "for", " ", "purpose", " ", "of", " ", "minimizing", " ", "variance", 
+      " ", "between", " ", "individual", " ", "repeats", " ", "of", " ", 
+      RowBox[{"the", " ", "'"}], "rank", " ", 
+      RowBox[{"randomization", "'"}], " ", "process"}], " "}]}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"resamplingfactor", "=", "1"}], ";"}], " ", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{"'", 
+      RowBox[{"1", "'"}], " ", "is", " ", "sufficient", " ", "for", " ", 
+      "this", " ", "data", " ", "set"}], ";", " ", 
+     RowBox[{
+      RowBox[{
+      "but", " ", "a", " ", "larger", " ", "value", " ", "may", " ", "be", 
+       " ", "helpful", " ", "for", " ", "data", " ", "sets", " ", "derived", 
+       " ", "from", " ", "lower"}], "-", 
+      RowBox[{"resolution", " ", "images"}]}]}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "this", " ", "is", " ", "the", " ", "amount", " ", "of", " ", "rank", " ",
+      "randomization", " ", "that", " ", "produces", " ", "Spearman", " ", 
+     "Rank", " ", "Correlation", " ", "of", " ", "approximately", " ", 
+     "0.25"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"amountofrankrandomization", "=", "1800"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ReSampledMono1Distribution", "=", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"Flatten", "[", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+         RowBox[{"{", "resamplingfactor", "}"}]}], "]"}], "]"}], "]"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ReSampledMono2Distribution", "=", 
+     RowBox[{"Sort", "[", 
+      RowBox[{"Flatten", "[", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+         RowBox[{"{", "resamplingfactor", "}"}]}], "]"}], "]"}], "]"}]}], 
+    ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "response", " ", "distributions", " ", "in", " ", "partially", " ", 
+     "randomized", " ", "order"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SlightlyRandomizedMONO1Distribution", "=", 
+     RowBox[{"Sort", "[", 
+      RowBox[{
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"i", "+", 
+            RowBox[{"RandomReal", "[", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "amountofrankrandomization"}], ",", 
+               "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+           RowBox[{
+           "ReSampledMono1Distribution", "\[LeftDoubleBracket]", "i", 
+            "\[RightDoubleBracket]"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", 
+           RowBox[{"Length", "[", "ReSampledMono1Distribution", "]"}]}], 
+          "}"}]}], "]"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+          "<", 
+         RowBox[{
+         "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+        "&"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SlightlyRandomizedMONO2Distribution", "=", 
+     RowBox[{"Sort", "[", 
+      RowBox[{
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"i", "+", 
+            RowBox[{"RandomReal", "[", 
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "amountofrankrandomization"}], ",", 
+               "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+           RowBox[{
+           "ReSampledMono2Distribution", "\[LeftDoubleBracket]", "i", 
+            "\[RightDoubleBracket]"}]}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", 
+           RowBox[{"Length", "[", "ReSampledMono2Distribution", "]"}]}], 
+          "}"}]}], "]"}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+          "<", 
+         RowBox[{
+         "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+        "&"}]}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "computing", " ", "the", " ", "Spearman", " ", "Rank", " ", "Correlation",
+      " ", "of", " ", "the", " ", "partially", " ", "randomized", " ", 
+     "response", " ", "distributions"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"SpearmanRho", "[", 
+    RowBox[{
+     RowBox[{"SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+      RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+     RowBox[{"SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+      RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}]}], "]"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+     RowBox[{
+     "applying", " ", "the", " ", "principle", " ", "of", " ", "independent", 
+      " ", "drug", " ", 
+      RowBox[{"action", ":", " ", 
+       RowBox[{"in", " ", "each", " ", "row", " ", 
+        RowBox[{"(", 
+         RowBox[{"representing", " ", "a", " ", "patient"}], ")"}]}]}]}], ",",
+      " ", 
+     RowBox[{"the", " ", "drug", " ", "response", " ", 
+      RowBox[{"(", 
+       RowBox[{"duration", " ", "of", " ", "PFS"}], ")"}], " ", "is", " ", 
+      "taken", " ", "to", " ", "be", " ", "the", " ", "best", " ", "one", " ",
+       "of", " ", "the", " ", "two", " ", "sampled", " ", "monotherapy", " ", 
+      "responses"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"PartiallyCorrelatedSamplesOfMonotherapyResponses", "=", 
+     RowBox[{"Table", "[", 
+      RowBox[{
+       RowBox[{"Max", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+          "SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+           RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+          RowBox[{
+          "SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+           RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], "]"}],
+        ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", "1", ",", 
+         RowBox[{"Length", "[", "ReSampledMono1Distribution", "]"}]}], 
+        "}"}]}], "]"}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.6617586751399307`*^9, 3.6617587767057395`*^9}, {
+   3.6617590422109256`*^9, 3.6617590813141623`*^9}, {3.6617591912184486`*^9, 
+   3.661759202018066*^9}, {3.6617599284826174`*^9, 3.6617599371941156`*^9}, {
+   3.661759970771036*^9, 3.6617599820586815`*^9}, {3.6617600635473423`*^9, 
+   3.66176006385036*^9}, {3.6617601063067884`*^9, 3.6617601082018967`*^9}, {
+   3.665540628806692*^9, 3.6655406523820405`*^9}, {3.665541105862978*^9, 
+   3.66554111428546*^9}, {3.6655411623982115`*^9, 3.6655411624622154`*^9}, {
+   3.6655412507752666`*^9, 3.665541270438391*^9}, {3.665541311254726*^9, 
+   3.6655413125417995`*^9}, {3.6655416228225465`*^9, 
+   3.6655416412456007`*^9}, {3.6655417158388667`*^9, 
+   3.6655417177579765`*^9}, {3.665762639450184*^9, 3.6657626623274927`*^9}, {
+   3.665855190134801*^9, 3.665855206269724*^9}, {3.665855295792844*^9, 
+   3.665855300532115*^9}, {3.6658553448616486`*^9, 3.6658554202009573`*^9}, {
+   3.665855520751709*^9, 3.6658555648132286`*^9}, {3.665858456325257*^9, 
+   3.665858456661276*^9}, {3.6659757768063564`*^9, 3.665975802404821*^9}, {
+   3.665975834805674*^9, 3.665975920332566*^9}, {3.6670930644423666`*^9, 
+   3.6670931718025074`*^9}, {3.6670932043963714`*^9, 
+   3.6670932509700356`*^9}, {3.6670933858667507`*^9, 3.667093406201914*^9}, {
+   3.6670934503304377`*^9, 3.6670934503944416`*^9}, {3.672064959893735*^9, 
+   3.6720649602537556`*^9}, {3.6722717900194407`*^9, 
+   3.6722718103696046`*^9}, {3.672271927307293*^9, 3.6722719526177406`*^9}, {
+   3.67227199352108*^9, 3.6722719936340866`*^9}, {3.6837371192048454`*^9, 
+   3.6837371192068453`*^9}, 3.6837372576247625`*^9, {3.6837405207454023`*^9, 
+   3.6837406337688675`*^9}, 3.683740923940464*^9, {3.684073082614761*^9, 
+   3.6840730936833935`*^9}, {3.6840731385929623`*^9, 3.684073138710969*^9}, {
+   3.6840734917491617`*^9, 3.684073510378227*^9}, {3.6840735497064767`*^9, 
+   3.6840735831543903`*^9}, {3.684538379520651*^9, 3.684538524905733*^9}, {
+   3.6845386187257204`*^9, 3.684538718258722*^9}, {3.684540976427156*^9, 
+   3.6845410953677907`*^9}, 3.684541301461933*^9, {3.6845413352129993`*^9, 
+   3.6845413375706034`*^9}, {3.684541412595748*^9, 3.6845414143917513`*^9}, {
+   3.684541475260269*^9, 3.6845414756044703`*^9}, {3.6845415108869386`*^9, 
+   3.6845415140057445`*^9}, {3.685653832320588*^9, 3.685653870753786*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Repeating", " ", "the", " ", "randomization", " ", "procedure", " ", 
+    "100", " ", "times", " ", "to", " ", "show", " ", "that", " ", "response",
+     " ", "correlation", " ", "is", " ", "tightly", " ", "distributed", " ", 
+    "around", " ", "the", " ", "targeted", " ", "value", " ", "of", " ", 
+    "0.25"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"TableOfCorrelationsFromRepeats", "=", 
+    RowBox[{"Table", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"amountofrankrandomization", "=", "1800"}], ";", 
+       "\[IndentingNewLine]", 
+       RowBox[{"SlightlyRandomizedMONO1Distribution", "=", 
+        RowBox[{"Sort", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"i", "+", 
+               RowBox[{"RandomReal", "[", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"-", "amountofrankrandomization"}], ",", 
+                  "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+              RowBox[{
+              "ReSampledMono1Distribution", "\[LeftDoubleBracket]", "i", 
+               "\[RightDoubleBracket]"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", "1", ",", 
+              RowBox[{"Length", "[", "ReSampledMono1Distribution", "]"}]}], 
+             "}"}]}], "]"}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+            "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+            RowBox[{
+            "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+           "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+       RowBox[{"SlightlyRandomizedMONO2Distribution", "=", 
+        RowBox[{"Sort", "[", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"i", "+", 
+               RowBox[{"RandomReal", "[", 
+                RowBox[{"{", 
+                 RowBox[{
+                  RowBox[{"-", "amountofrankrandomization"}], ",", 
+                  "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+              RowBox[{
+              "ReSampledMono2Distribution", "\[LeftDoubleBracket]", "i", 
+               "\[RightDoubleBracket]"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", "1", ",", 
+              RowBox[{"Length", "[", "ReSampledMono2Distribution", "]"}]}], 
+             "}"}]}], "]"}], ",", 
+          RowBox[{
+           RowBox[{
+            RowBox[{
+            "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+            RowBox[{
+            "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+           "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+       "\[IndentingNewLine]", 
+       RowBox[{"SpearmanRho", "[", 
+        RowBox[{
+         RowBox[{
+         "SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+         RowBox[{
+         "SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}]}], "]"}]}], 
+      "\[IndentingNewLine]", ",", 
+      RowBox[{"{", "100", "}"}]}], "]"}]}], ";"}]}]], "Input",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGCQAmIQzZKptt/B47Wj3Df9AyB62Vu/EyD6kdD9syA6t9j7
+eJn/a0e/8EIw3di1/T+IFpH9xFIOpFlkjgmC6AnqXOIgunZqlSOInvpwuROI
+LrcQ9QbRHe/kfEC000QF7cdAmnGhii6IFtlUXyYQ8Nqx3ud8OYju0p3eDqIP
+2P3vBNFT1GcwCwFpMd6FYPpE8ywbbyBd1X7MHkSnrxZxA9Fznmb6gmgTP+Mb
+OUGvHcU5hW6D6NVXr94D0TrnVjwA0Ve/nPsComdHvf4OorNFXSteRL92XPXO
+H0xb7kyr9I157fhGsQJMcyVdbwfRi4RP9YHoK9efHdYueu1o9gJCb5aOqNEF
+0nni5o0gWqQ1tBVEx2RatYNohaDui+eBdJvxp6sgWu07p90FIL345VkwzWc4
+P3BLMTD89rGHgWiBP9ku24B0i+JRVxANAI8RyHA=
+  "]],
+
+Cell[BoxData[{
+ RowBox[{"Print", "[", 
+  RowBox[{"\"\<Mean response correlation = \>\"", "<>", 
+   RowBox[{"ToString", "[", 
+    RowBox[{"Round", "[", 
+     RowBox[{
+      RowBox[{"Mean", "[", "TableOfCorrelationsFromRepeats", "]"}], ",", 
+      "0.001"}], "]"}], "]"}]}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Histogram", "[", 
+  RowBox[{"TableOfCorrelationsFromRepeats", ",", 
+   RowBox[{"{", 
+    RowBox[{"0.", ",", "1.0", ",", "0.01"}], "}"}], ",", 
+   "\"\<Probability\>\"", ",", 
+   RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+   RowBox[{"FrameLabel", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<Spearman Rank Correlation\>\"", ",", "\"\<Probability\>\""}], 
+     "}"}]}]}], "]"}]}], "Input",
+ CellChangeTimes->{{3.683740685695837*^9, 3.6837407047119246`*^9}, {
+  3.68374073539968*^9, 3.6837407825063744`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "computing", " ", "median", " ", "PFS", " ", "for", " ", "each", " ", 
+     RowBox[{"condition", ":", " ", 
+      RowBox[{"the", " ", "observed", " ", "monotherapies"}]}]}], ",", " ", 
+    RowBox[{"the", " ", "observed", " ", "combination"}], ",", " ", 
+    RowBox[{
+    "and", " ", "the", " ", "simulated", " ", "effects", " ", "with", " ", 
+     "no", " ", "response", " ", "correlation", " ", "or", " ", "with", " ", 
+     "partial", " ", "response", " ", "correlation"}]}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Mono1Median", "=", 
+    RowBox[{"Median", "[", 
+     RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+      RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Mono2Median", "=", 
+    RowBox[{"Median", "[", 
+     RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+      RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"ComboMedian", "=", 
+    RowBox[{"Median", "[", 
+     RowBox[{"ComboSurvivalDistribution", "\[LeftDoubleBracket]", 
+      RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Sim1Median", "=", 
+    RowBox[{
+    "Median", "[", "UncorrelatedSamplesOfMonotherapyResponses", "]"}]}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Sim2Median", "=", 
+    RowBox[{
+    "Median", "[", "PartiallyCorrelatedSamplesOfMonotherapyResponses", 
+     "]"}]}]}]}]], "Input",
+ CellChangeTimes->{{3.6837408148402243`*^9, 3.68374085900875*^9}, 
+   3.683740923952465*^9, {3.683740964153764*^9, 3.6837410041770535`*^9}, 
+   3.6837412095127983`*^9}],
+
+Cell[BoxData[
+ RowBox[{"SurvivalPlot", "=", 
+  RowBox[{"Plot", "[", 
+   RowBox[{
+    RowBox[{"{", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"SurvivalFunction", "[", 
+        RowBox[{"EmpiricalDistribution", "[", 
+         RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "]"}], 
+       "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"SurvivalFunction", "[", 
+        RowBox[{"EmpiricalDistribution", "[", 
+         RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "]"}], 
+       "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"SurvivalFunction", "[", 
+        RowBox[{"EmpiricalDistribution", "[", 
+         RowBox[{"ComboSurvivalDistribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], "]"}], 
+       "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"SurvivalFunction", "[", 
+        RowBox[{
+        "EmpiricalDistribution", "[", 
+         "PartiallyCorrelatedSamplesOfMonotherapyResponses", "]"}], "]"}], 
+       "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"SurvivalFunction", "[", 
+        RowBox[{
+        "EmpiricalDistribution", "[", 
+         "UncorrelatedSamplesOfMonotherapyResponses", "]"}], "]"}], "[", "x", 
+       "]"}]}], "\[IndentingNewLine]", "}"}], "\[IndentingNewLine]", ",", 
+    RowBox[{"{", 
+     RowBox[{"x", ",", "0", ",", "16"}], "}"}], ",", 
+    RowBox[{"PlotRange", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"0", ",", "15"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"0", ",", "1.11"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"Exclusions", "\[Rule]", "None"}], ",", 
+    RowBox[{"PlotStyle", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Directive", "[", 
+        RowBox[{
+         RowBox[{"RGBColor", "[", 
+          RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+         RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}], ",", 
+       RowBox[{"Directive", "[", 
+        RowBox[{
+         RowBox[{"ColorData", "[", 
+          RowBox[{"3", ",", "4"}], "]"}], ",", 
+         RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}], ",", 
+       RowBox[{"Directive", "[", 
+        RowBox[{
+         RowBox[{"ColorData", "[", 
+          RowBox[{"3", ",", "6"}], "]"}], ",", 
+         RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}], ",", 
+       RowBox[{"Directive", "[", 
+        RowBox[{"Black", ",", 
+         RowBox[{
+          RowBox[{"Dashing", "[", 
+           RowBox[{"{", 
+            RowBox[{"0.2", ",", "0.2"}], "}"}], "]"}], 
+          RowBox[{"AbsoluteThickness", "[", "2", "]"}]}]}], "]"}], ",", 
+       RowBox[{"Directive", "[", 
+        RowBox[{
+         RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+         RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}]}], "}"}]}], 
+    ",", 
+    RowBox[{"BaseStyle", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+    RowBox[{"FrameStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"Black", ",", 
+       RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+    RowBox[{"Frame", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameTicks", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"i", ",", 
+             RowBox[{"100", "*", "i"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"0", ",", "0.015"}], "}"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "0", ",", "1", ",", 
+             RowBox[{"1", "/", "5"}]}], "}"}]}], "]"}], ",", "None"}], "}"}], 
+       ",", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"i", ",", "i", ",", 
+             RowBox[{"{", 
+              RowBox[{"0", ",", "0.015"}], "}"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "0", ",", "60", ",", "3"}], "}"}]}], "]"}], ",",
+          "None"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"FrameLabel", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+       "Style", "[", "\"\<Progression free survival (months)\>\"", "]"}], ",", 
+       RowBox[{"Style", "[", "\"\<Patients (%)\>\"", "]"}]}], "}"}]}], ",", 
+    RowBox[{"Prolog", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"Gray", ",", 
+       RowBox[{"Thickness", "[", "Medium", "]"}], ",", 
+       RowBox[{"Lighter", "[", 
+        RowBox[{"Yellow", ",", "0.75"}], "]"}], ",", 
+       RowBox[{"EdgeForm", "[", "None", "]"}], ",", 
+       RowBox[{"Rectangle", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "1"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"15", ",", "1.11"}], "}"}]}], "]"}], ",", 
+       "\[IndentingNewLine]", "Black", ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{"\"\<Median:\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{"0.2", ",", "1.03"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", 
+           RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+       RowBox[{"RGBColor", "[", 
+        RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"ToString", "[", 
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"Mono1Median", ",", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"Mono1Median", ",", "1.03"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", 
+           RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+       RowBox[{"Darker", "[", 
+        RowBox[{
+         RowBox[{"ColorData", "[", 
+          RowBox[{"3", ",", "4"}], "]"}], ",", "0.1"}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"ToString", "[", 
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"Mono2Median", ",", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"Mono2Median", ",", "1.03"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", 
+           RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+       RowBox[{"ColorData", "[", 
+        RowBox[{"3", ",", "6"}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"ToString", "[", 
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"ComboMedian", ",", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"ComboMedian", ",", "1.03"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", 
+           RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+       RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"ToString", "[", 
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"Sim1Median", ",", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"Sim1Median", ",", "1.0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "1"}], "}"}]}], "]"}], ",", "Black", ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"ToString", "[", 
+          RowBox[{"NumberForm", "[", 
+           RowBox[{"Sim2Median", ",", 
+            RowBox[{"{", 
+             RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"Sim2Median", ",", "1.0"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "1"}], "}"}]}], "]"}], ",", 
+       RowBox[{"AbsoluteThickness", "[", "2", "]"}], ",", 
+       RowBox[{"RGBColor", "[", 
+        RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"Mono1Median", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"Mono1Median", ",", "1.03"}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"Darker", "[", 
+        RowBox[{
+         RowBox[{"ColorData", "[", 
+          RowBox[{"3", ",", "4"}], "]"}], ",", "0.1"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"Mono2Median", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"Mono2Median", ",", "1.03"}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+       RowBox[{"Opacity", "[", "1", "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"Sim1Median", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"Sim1Median", ",", "1.03"}], "}"}]}], "}"}], "]"}], ",", 
+       "Black", ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"Sim2Median", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"Sim2Median", ",", "1.03"}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"ColorData", "[", 
+        RowBox[{"3", ",", "6"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"ComboMedian", ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"ComboMedian", ",", "1.03"}], "}"}]}], "}"}], "]"}]}], 
+      "}"}]}], ",", "\[IndentingNewLine]", 
+    RowBox[{"AspectRatio", "\[Rule]", 
+     RowBox[{"1", "/", "2"}]}], ",", 
+    RowBox[{"Filling", "\[Rule]", "None"}], ",", 
+    RowBox[{"FillingStyle", "->", 
+     RowBox[{"Directive", "[", 
+      RowBox[{
+       RowBox[{"Opacity", "[", "1", "]"}], ",", 
+       RowBox[{"GrayLevel", "[", "0.75", "]"}]}], "]"}]}], ",", 
+    RowBox[{"ImageSize", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", "1000", "}"}], ",", 
+       RowBox[{"{", "250", "}"}]}], "}"}]}], ",", 
+    RowBox[{"ImagePadding", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"60", ",", "10"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"60", ",", "10"}], "}"}]}], "}"}]}], ",", 
+    RowBox[{"PlotPoints", "\[Rule]", "500"}], ",", 
+    RowBox[{"Epilog", "->", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"EdgeForm", "[", 
+        RowBox[{"Directive", "[", 
+         RowBox[{"Black", ",", 
+          RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}], "]"}], ",", 
+       "White", ",", 
+       RowBox[{"Opacity", "[", "0.7", "]"}], ",", 
+       RowBox[{"Opacity", "[", "1", "]"}], ",", 
+       RowBox[{"EdgeForm", "[", "None", "]"}], ",", 
+       RowBox[{"CapForm", "[", "\"\<Butt\>\"", "]"}], ",", 
+       RowBox[{"AbsoluteThickness", "[", "3", "]"}], ",", 
+       RowBox[{"AbsolutePointSize", "[", "8", "]"}], ",", 
+       RowBox[{"RGBColor", "[", 
+        RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0.4", ",", "0.38"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0.38"}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"ColorData", "[", 
+        RowBox[{"3", ",", "4"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0.4", ",", "0.3"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0.3"}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"ColorData", "[", 
+        RowBox[{"3", ",", "6"}], "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0.4", ",", "0.22"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0.22"}], "}"}]}], "}"}], "]"}], ",", 
+       RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+       RowBox[{"Opacity", "[", "1", "]"}], ",", 
+       RowBox[{"AbsoluteThickness", "[", "2", "]"}], ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0.4", ",", "0.14"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0.14"}], "}"}]}], "}"}], "]"}], ",", "Black", 
+       ",", 
+       RowBox[{"Line", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"0.4", ",", "0.06"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "0.06"}], "}"}]}], "}"}], "]"}], ",", "Black", 
+       ",", 
+       RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+       RowBox[{"FontSize", "\[Rule]", "11"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<Ipilimumab\>\"", ",", 
+           RowBox[{"FontSize", "\[Rule]", "11"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"1.15", ",", "0.38"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "0"}], "}"}]}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<Nivolumab\>\"", ",", 
+           RowBox[{"FontSize", "\[Rule]", "11"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"1.15", ",", "0.3"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "0"}], "}"}]}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<Combination\>\"", ",", 
+           RowBox[{"FontSize", "\[Rule]", "11"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"1.15", ",", "0.22"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "0"}], "}"}]}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<Random sampling (\[Rho]=0)\>\"", ",", 
+           RowBox[{"FontSize", "\[Rule]", "11"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"1.15", ",", "0.14"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "0"}], "}"}]}], "]"}], ",", 
+       RowBox[{"Text", "[", 
+        RowBox[{
+         RowBox[{"Style", "[", 
+          RowBox[{"\"\<Correlated sampling (\[Rho]=0.25)\>\"", ",", 
+           RowBox[{"FontSize", "\[Rule]", "11"}]}], "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"1.15", ",", "0.06"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "0"}], "}"}]}], "]"}]}], "}"}]}]}], 
+   "]"}]}]], "Input",
+ CellChangeTimes->{{3.674493901531036*^9, 3.674493919667431*^9}, {
+   3.6744939875490503`*^9, 3.6744940289642076`*^9}, {3.6744940609614305`*^9, 
+   3.674494074641407*^9}, {3.674494156093458*^9, 3.6744941765406275`*^9}, {
+   3.6744942325906305`*^9, 3.6744942739895935`*^9}, {3.6744946042752604`*^9, 
+   3.6744946046132793`*^9}, {3.674494660451947*^9, 3.6744946605099506`*^9}, {
+   3.674494890214156*^9, 3.6744949071279955`*^9}, {3.6758211690784607`*^9, 
+   3.675821193580497*^9}, {3.6785603086975965`*^9, 3.6785603515170455`*^9}, {
+   3.681931937266535*^9, 3.68193195920979*^9}, {3.6819320205642996`*^9, 
+   3.6819320491469345`*^9}, {3.681932089667252*^9, 3.6819321738550673`*^9}, {
+   3.6819325689816675`*^9, 3.6819325805133266`*^9}, {3.681932868942824*^9, 
+   3.6819328744071364`*^9}, {3.6824315465038157`*^9, 
+   3.6824315611496534`*^9}, {3.6824787330242825`*^9, 
+   3.6824787396526613`*^9}, {3.683737104053979*^9, 3.683737119243848*^9}, 
+   3.6837409239824667`*^9, {3.6837411664193335`*^9, 3.6837411742427807`*^9}, 
+   3.6837412095317993`*^9, {3.6837412501551228`*^9, 3.683741292913568*^9}, {
+   3.68407315375983*^9, 3.684073153917839*^9}, {3.6840731947661753`*^9, 
+   3.684073229007134*^9}, {3.6840732630500813`*^9, 3.6840733259306774`*^9}, {
+   3.6840733612066956`*^9, 3.6840734347599025`*^9}, {3.6840734697019005`*^9, 
+   3.6840734735261197`*^9}, {3.684073643457839*^9, 3.6840737456176825`*^9}, {
+   3.6840737831228275`*^9, 3.6840737975156507`*^9}, {3.684073829045454*^9, 
+   3.6840738745810585`*^9}, {3.6840740453638268`*^9, 
+   3.6840740628218255`*^9}, {3.684074097014781*^9, 3.6840741374240923`*^9}, {
+   3.6856539791689873`*^9, 3.6856539795370083`*^9}, {3.685654841644145*^9, 
+   3.685654859804171*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"vertical", " ", "offset", " ", "of", " ", "median", " ", "bar"}], 
+   " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"vo", "=", 
+     RowBox[{"-", "0.985"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"SurvivalPlot", "=", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{"{", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"SurvivalFunction", "[", 
+          RowBox[{"EmpiricalDistribution", "[", 
+           RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+            RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], 
+          "]"}], "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"SurvivalFunction", "[", 
+          RowBox[{"EmpiricalDistribution", "[", 
+           RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+            RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], 
+          "]"}], "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"SurvivalFunction", "[", 
+          RowBox[{"EmpiricalDistribution", "[", 
+           RowBox[{"ComboSurvivalDistribution", "\[LeftDoubleBracket]", 
+            RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], "]"}], 
+          "]"}], "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"SurvivalFunction", "[", 
+          RowBox[{
+          "EmpiricalDistribution", "[", 
+           "PartiallyCorrelatedSamplesOfMonotherapyResponses", "]"}], "]"}], 
+         "[", "x", "]"}], ",", "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"SurvivalFunction", "[", 
+          RowBox[{
+          "EmpiricalDistribution", "[", 
+           "UncorrelatedSamplesOfMonotherapyResponses", "]"}], "]"}], "[", 
+         "x", "]"}]}], "\[IndentingNewLine]", "}"}], "\[IndentingNewLine]", 
+      ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "0", ",", "16"}], "}"}], ",", 
+      RowBox[{"PlotRange", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"0", ",", "15"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "1.11"}], "}"}]}], "}"}]}], ",", 
+      RowBox[{"Exclusions", "\[Rule]", "None"}], ",", 
+      RowBox[{"PlotStyle", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"Directive", "[", 
+          RowBox[{
+           RowBox[{"RGBColor", "[", 
+            RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+           RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}], ",", 
+         RowBox[{"Directive", "[", 
+          RowBox[{
+           RowBox[{"ColorData", "[", 
+            RowBox[{"3", ",", "4"}], "]"}], ",", 
+           RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}], ",", 
+         RowBox[{"Directive", "[", 
+          RowBox[{
+           RowBox[{"ColorData", "[", 
+            RowBox[{"3", ",", "6"}], "]"}], ",", 
+           RowBox[{"AbsoluteThickness", "[", "3", "]"}]}], "]"}], ",", 
+         RowBox[{"Directive", "[", 
+          RowBox[{"Black", ",", 
+           RowBox[{
+            RowBox[{"Dashing", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.2", ",", "0.2"}], "}"}], "]"}], 
+            RowBox[{"AbsoluteThickness", "[", "2", "]"}]}]}], "]"}], ",", 
+         RowBox[{"Directive", "[", 
+          RowBox[{
+           RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+           RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}]}], "}"}]}], 
+      ",", 
+      RowBox[{"BaseStyle", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+         RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+      RowBox[{"FrameStyle", "\[Rule]", 
+       RowBox[{"Directive", "[", 
+        RowBox[{"Black", ",", 
+         RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+      RowBox[{"Frame", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"True", ",", "False"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+      RowBox[{"FrameTicks", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"Table", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"i", ",", 
+               RowBox[{"100", "*", "i"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"0", ",", "0.015"}], "}"}]}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", "0", ",", "1", ",", 
+               RowBox[{"1", "/", "5"}]}], "}"}]}], "]"}], ",", "None"}], 
+          "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"Join", "[", 
+            RowBox[{
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"i", ",", "i", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0.015"}], "}"}]}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", "0", ",", "15", ",", "3"}], "}"}]}], "]"}], 
+             ",", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{"i", ",", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0.01"}], "}"}]}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", "0", ",", "15", ",", "1"}], "}"}]}], 
+              "]"}]}], "]"}], ",", "None"}], "}"}]}], "}"}]}], ",", 
+      RowBox[{"FrameLabel", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+         "Style", "[", "\"\<Progression free survival (months)\>\"", "]"}], 
+         ",", 
+         RowBox[{"Style", "[", "\"\<Patients (%)\>\"", "]"}]}], "}"}]}], ",", 
+      RowBox[{"Prolog", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{"Gray", ",", 
+         RowBox[{"Thickness", "[", "Medium", "]"}], ",", 
+         RowBox[{"Lighter", "[", 
+          RowBox[{"Yellow", ",", "0.75"}], "]"}], ",", 
+         RowBox[{"EdgeForm", "[", "None", "]"}], ",", 
+         RowBox[{"Rectangle", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0", ",", 
+             RowBox[{"1", "+", "vo", "-", "0.02"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"15", ",", 
+             RowBox[{"1.11", "+", "vo"}]}], "}"}]}], "]"}], ",", 
+         "\[IndentingNewLine]", "Black", ",", 
+         RowBox[{"Text", "[", 
+          RowBox[{"\"\<Median:\>\"", ",", 
+           RowBox[{"{", 
+            RowBox[{"0.2", ",", 
+             RowBox[{"1.03", "+", "vo"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "1"}], ",", 
+             RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+         RowBox[{"RGBColor", "[", 
+          RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+         RowBox[{"Text", "[", 
+          RowBox[{
+           RowBox[{"ToString", "[", 
+            RowBox[{"NumberForm", "[", 
+             RowBox[{"Mono1Median", ",", 
+              RowBox[{"{", 
+               RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"Mono1Median", ",", 
+             RowBox[{"1.03", "+", "vo"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", 
+             RowBox[{"+", "vo"}]}], "}"}]}], "]"}], ",", 
+         RowBox[{"Darker", "[", 
+          RowBox[{
+           RowBox[{"ColorData", "[", 
+            RowBox[{"3", ",", "4"}], "]"}], ",", "0.1"}], "]"}], ",", 
+         RowBox[{"Text", "[", 
+          RowBox[{
+           RowBox[{"ToString", "[", 
+            RowBox[{"NumberForm", "[", 
+             RowBox[{"Mono2Median", ",", 
+              RowBox[{"{", 
+               RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"Mono2Median", ",", 
+             RowBox[{"1.03", "+", "vo"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"0", ",", 
+             RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+         RowBox[{"ColorData", "[", 
+          RowBox[{"3", ",", "6"}], "]"}], ",", 
+         RowBox[{"Text", "[", 
+          RowBox[{
+           RowBox[{"ToString", "[", 
+            RowBox[{"NumberForm", "[", 
+             RowBox[{"ComboMedian", ",", 
+              RowBox[{"{", 
+               RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"ComboMedian", ",", 
+             RowBox[{"1.03", "+", "vo"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "0.9"}], ",", 
+             RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+         RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+         RowBox[{"Text", "[", 
+          RowBox[{
+           RowBox[{"ToString", "[", 
+            RowBox[{"NumberForm", "[", 
+             RowBox[{"Sim1Median", ",", 
+              RowBox[{"{", 
+               RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"Sim1Median", ",", 
+             RowBox[{"1.03", "+", "vo"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"-", "0.4"}], ",", 
+             RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", "Black", ",", 
+         RowBox[{"Text", "[", 
+          RowBox[{
+           RowBox[{"ToString", "[", 
+            RowBox[{"NumberForm", "[", 
+             RowBox[{"Sim2Median", ",", 
+              RowBox[{"{", 
+               RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"Sim2Median", ",", 
+             RowBox[{"1.03", "+", "vo"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"1", ",", 
+             RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+         RowBox[{"AbsoluteThickness", "[", "2", "]"}], ",", 
+         RowBox[{"RGBColor", "[", 
+          RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Mono1Median", ",", 
+              RowBox[{"1", "+", "vo", "-", "0.015"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"Mono1Median", ",", 
+              RowBox[{"1.03", "+", "vo"}]}], "}"}]}], "}"}], "]"}], ",", 
+         RowBox[{"Darker", "[", 
+          RowBox[{
+           RowBox[{"ColorData", "[", 
+            RowBox[{"3", ",", "4"}], "]"}], ",", "0.1"}], "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Mono2Median", ",", 
+              RowBox[{"1", "+", "vo", "-", "0.015"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"Mono2Median", ",", 
+              RowBox[{"1.03", "+", "vo"}]}], "}"}]}], "}"}], "]"}], ",", 
+         RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+         RowBox[{"Opacity", "[", "1", "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Sim1Median", ",", 
+              RowBox[{"1", "+", "vo", "-", "0.015"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"Sim1Median", ",", 
+              RowBox[{"1.03", "+", "vo"}]}], "}"}]}], "}"}], "]"}], ",", 
+         "Black", ",", 
+         RowBox[{"CapForm", "[", "\"\<Round\>\"", "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Sim2Median", ",", 
+              RowBox[{"1", "+", "vo", "-", "0.015"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"Sim2Median", ",", 
+              RowBox[{"1.02", "+", "vo"}]}], "}"}]}], "}"}], "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Sim2Median", ",", 
+              RowBox[{"1.02", "+", "vo"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"Sim2Median", "-", "0.15"}], ",", 
+              RowBox[{"1.03", "+", "vo"}]}], "}"}]}], "}"}], "]"}], ",", 
+         RowBox[{"ColorData", "[", 
+          RowBox[{"3", ",", "6"}], "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"ComboMedian", ",", 
+              RowBox[{"1", "+", "vo", "-", "0.015"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"ComboMedian", ",", 
+              RowBox[{"1.02", "+", "vo"}]}], "}"}]}], "}"}], "]"}], ",", 
+         RowBox[{"Line", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"ComboMedian", ",", 
+              RowBox[{"1.02", "+", "vo"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"ComboMedian", "+", "0.15"}], ",", 
+              RowBox[{"1.03", "+", "vo"}]}], "}"}]}], "}"}], "]"}]}], "}"}]}],
+       ",", "\[IndentingNewLine]", 
+      RowBox[{"AspectRatio", "\[Rule]", 
+       RowBox[{"1", "/", "2"}]}], ",", 
+      RowBox[{"Filling", "\[Rule]", "None"}], ",", 
+      RowBox[{"FillingStyle", "->", 
+       RowBox[{"Directive", "[", 
+        RowBox[{
+         RowBox[{"Opacity", "[", "1", "]"}], ",", 
+         RowBox[{"GrayLevel", "[", "0.75", "]"}]}], "]"}]}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", "1000", "}"}], ",", 
+         RowBox[{"{", "250", "}"}]}], "}"}]}], ",", 
+      RowBox[{"ImagePadding", "\[Rule]", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"60", ",", "10"}], "}"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"60", ",", "10"}], "}"}]}], "}"}]}], ",", 
+      RowBox[{"PlotPoints", "\[Rule]", "500"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\<Figure 1B, ipilimumab plus nivolumab PFS.pdf\>\""}], ",", 
+     "SurvivalPlot", ",", "\"\<PDF\>\""}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.6845374345944057`*^9, 3.684537711394952*^9}, {
+   3.6845377698950634`*^9, 3.6845377699574633`*^9}, {3.6845378548418293`*^9, 
+   3.6845379093169355`*^9}, {3.684537939424592*^9, 3.6845379533958197`*^9}, {
+   3.6845415815766735`*^9, 3.6845416026683207`*^9}, {3.6845454899257407`*^9, 
+   3.6845454904405413`*^9}, {3.6856539589938335`*^9, 
+   3.6856539599198866`*^9}, {3.685653994998893*^9, 3.685654012933919*^9}, {
+   3.685654543267528*^9, 3.685654544047529*^9}, 3.6856548651811857`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Plotting the dependence of predicted PFS on correlation", "Section",
+ CellChangeTimes->{{3.6816516976190557`*^9, 3.681651703529394*^9}, {
+  3.6827292887779264`*^9, 3.682729296049343*^9}, {3.683741631687945*^9, 
+  3.683741647567853*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "this", " ", "function", " ", "takes", " ", "as", " ", "its", " ", 
+     "input", " ", "an", " ", "amount", " ", "of", " ", "rank", " ", 
+     "randomization"}], ",", " ", 
+    RowBox[{
+    "and", " ", "returns", " ", "a", " ", "response", " ", "correlation", " ",
+      "and", " ", "predicted", " ", "median", " ", "PFS", " ", "at", " ", 
+     "this", " ", "level", " ", "of", " ", "correlation", " ", "in", " ", 
+     "drug", " ", "response"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"PFSvsCorrelation", "[", "amountofrankrandomization_", "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"SlightlyRandomizedMONO1Distribution", "=", 
+       RowBox[{"Sort", "[", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"i", "+", 
+              RowBox[{"RandomReal", "[", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"-", "amountofrankrandomization"}], ",", 
+                 "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+             RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+           ",", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "1", ",", 
+             RowBox[{"Length", "[", "Mono1SurvivalDistribution", "]"}]}], 
+            "}"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+           RowBox[{
+           "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+          "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"SlightlyRandomizedMONO2Distribution", "=", 
+       RowBox[{"Sort", "[", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"i", "+", 
+              RowBox[{"RandomReal", "[", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"-", "amountofrankrandomization"}], ",", 
+                 "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+             RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+           ",", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "1", ",", 
+             RowBox[{"Length", "[", "Mono2SurvivalDistribution", "]"}]}], 
+            "}"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+           RowBox[{
+           "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+          "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"ResponseCorrelation", "=", 
+       RowBox[{"SpearmanRho", "[", 
+        RowBox[{
+         RowBox[{
+         "SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+         RowBox[{
+         "SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}]}], "]"}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"PartiallyCorrelatedSamplesOfMonotherapyResponses", "=", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Max", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{
+            "SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+             RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+            RowBox[{
+            "SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+             RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+          "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", 
+           RowBox[{"Length", "[", "Mono1SurvivalDistribution", "]"}]}], 
+          "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"MedianPFS", "=", 
+       RowBox[{
+       "Median", "[", "PartiallyCorrelatedSamplesOfMonotherapyResponses", 
+        "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{"ResponseCorrelation", ",", "MedianPFS"}], "}"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}]}]], "Input",
+ CellChangeTimes->CompressedData["
+1:eJwdzmkog3EAx/ElR8lchYWEF4/cbbKSHP83jBzLuUZWjkzWHOVoEUOipFwv
+KDavHa/UJvcVLR5HJMcLRUxP5ErueX7/F78+9Xv1DSqtyamwEwgEQfygXFfu
+myzjSPWIdwi8W0mRwQlhWCbs+b1VQttQcjEcq3MzQYmUMcO8acUiNF+tLcHj
+zudtyEi/qdLDtD341NBN1RyMrjdmc2Qmrm8Ldo3H/8HW4DQbZJYzHJp4my1Z
+1B9W4Q4znVhPaGKsPlBT4CGif855Iny/CCHQdqpLhwpiplorH0OveY90lgiY
+Lt9Uuss5Mjy5Uwy/Sj4robfTgBoaB/20MFHb3QQFrqIu+OEw1gv1audXD96I
+UC9qrSw6daqII29zD/mwdupNBZs/T8qgv0iihTNtwhrYfy037ao4EkYK52H2
+6toStAZcUo0Jar1Yy5H52Bbqvn5nBC7kKgzwOM9SJeEtj7nRQFmdaQ8KX8Qs
+tI+JfoAdSQlU5sa6EV7PdwjvqfWvbYZIXkeXdurZrP03ZAsC7aJ4/wEPJv52
+
+  "]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "this", " ", "function", " ", "takes", " ", "as", " ", "its", " ", 
+     "input", " ", "an", " ", "amount", " ", "of", " ", "rank", " ", 
+     "randomization"}], ",", " ", 
+    RowBox[{
+    "and", " ", "returns", " ", "a", " ", "response", " ", "correlation", " ",
+      "and", " ", "predicted", " ", "median", " ", "PFS", " ", "at", " ", 
+     "this", " ", "level", " ", "of", " ", "correlation", " ", "in", " ", 
+     "drug", " ", "response"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+   "PFSvsNegativeCorrelation", "[", "amountofrankrandomization_", "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"SlightlyRandomizedMONO1Distribution", "=", 
+       RowBox[{"Sort", "[", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"i", "+", 
+              RowBox[{"RandomReal", "[", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"-", "amountofrankrandomization"}], ",", 
+                 "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+             RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+           ",", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "1", ",", 
+             RowBox[{"Length", "[", "Mono1SurvivalDistribution", "]"}]}], 
+            "}"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+           RowBox[{
+           "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+          "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"SlightlyRandomizedMONO2Distribution", "=", 
+       RowBox[{"Sort", "[", 
+        RowBox[{
+         RowBox[{"Table", "[", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"i", "+", 
+              RowBox[{"RandomReal", "[", 
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"-", "amountofrankrandomization"}], ",", 
+                 "amountofrankrandomization"}], "}"}], "]"}]}], ",", 
+             RowBox[{
+              RowBox[{"Reverse", "[", "Mono2SurvivalDistribution", "]"}], 
+              "\[LeftDoubleBracket]", 
+              RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+           ",", 
+           RowBox[{"{", 
+            RowBox[{"i", ",", "1", ",", 
+             RowBox[{"Length", "[", "Mono2SurvivalDistribution", "]"}]}], 
+            "}"}]}], "]"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#1", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+           RowBox[{
+           "#2", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+          "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"ResponseCorrelation", "=", 
+       RowBox[{"SpearmanRho", "[", 
+        RowBox[{
+         RowBox[{
+         "SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+         RowBox[{
+         "SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+          RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}]}], "]"}]}], 
+      ";", "\[IndentingNewLine]", 
+      RowBox[{"PartiallyCorrelatedSamplesOfMonotherapyResponses", "=", 
+       RowBox[{"Table", "[", 
+        RowBox[{
+         RowBox[{"Max", "[", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{
+            "SlightlyRandomizedMONO1Distribution", "\[LeftDoubleBracket]", 
+             RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}], ",", 
+            RowBox[{
+            "SlightlyRandomizedMONO2Distribution", "\[LeftDoubleBracket]", 
+             RowBox[{"i", ",", "2"}], "\[RightDoubleBracket]"}]}], "}"}], 
+          "]"}], ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1", ",", 
+           RowBox[{"Length", "[", "Mono1SurvivalDistribution", "]"}]}], 
+          "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"MedianPFS", "=", 
+       RowBox[{
+       "Median", "[", "PartiallyCorrelatedSamplesOfMonotherapyResponses", 
+        "]"}]}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{"ResponseCorrelation", ",", "MedianPFS"}], "}"}]}]}], 
+    "\[IndentingNewLine]", "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.68407509618093*^9, 3.684075107963604*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "executing", " ", "the", " ", "above", " ", "function", " ", "over", " ", 
+    "a", " ", "wide", " ", "range", " ", "of", " ", "rank", " ", 
+    "randomization", " ", "values", " ", 
+    RowBox[{"(", 
+     RowBox[{"log", "-", 
+      RowBox[{
+      "distributed", " ", "to", " ", "achieve", " ", "the", " ", "necessary", 
+       " ", "range"}]}], ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"manycorrelations", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"PFSvsCorrelation", "[", 
+       SuperscriptBox["10", "i"], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "0.", ",", "5.5", ",", "0.01"}], "}"}]}], "]"}]}], 
+   ";"}]}]], "Input",
+ CellChangeTimes->{{3.681651954088725*^9, 3.6816521045543313`*^9}, {
+   3.6816522847296367`*^9, 3.6816522847946405`*^9}, {3.6816524774566603`*^9, 
+   3.681652477818681*^9}, {3.6816529083073034`*^9, 3.6816529298265343`*^9}, {
+   3.681652972362967*^9, 3.6816529724409714`*^9}, 3.6816536480036116`*^9, {
+   3.681654645370658*^9, 3.681654647673789*^9}, {3.6816546991207323`*^9, 
+   3.6816547008108287`*^9}, {3.6816547440593023`*^9, 
+   3.6816547898009186`*^9}, {3.6816552047706537`*^9, 
+   3.6816552048266563`*^9}, {3.6837417171688337`*^9, 
+   3.6837417421052604`*^9}, {3.6837419515932426`*^9, 3.6837419983709183`*^9}, 
+   3.684075277220285*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "executing", " ", "the", " ", "above", " ", "function", " ", "over", " ", 
+    "a", " ", "wide", " ", "range", " ", "of", " ", "rank", " ", 
+    "randomization", " ", "values", " ", 
+    RowBox[{"(", 
+     RowBox[{"log", "-", 
+      RowBox[{
+      "distributed", " ", "to", " ", "achieve", " ", "the", " ", "necessary", 
+       " ", "range"}]}], ")"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"manynegativecorrelations", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"PFSvsNegativeCorrelation", "[", 
+       SuperscriptBox["10", "i"], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "0.", ",", "5.5", ",", "0.01"}], "}"}]}], "]"}]}], 
+   ";"}]}]], "Input",
+ CellChangeTimes->{{3.6840751167681074`*^9, 3.684075122097412*^9}, 
+   3.6840752813225193`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"joinedcorrelations", "=", 
+   RowBox[{"Join", "[", 
+    RowBox[{"manycorrelations", ",", "manynegativecorrelations"}], "]"}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.684075196788685*^9, 3.6840752072792845`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"fitting", " ", "a", " ", "linear"}], "-", "plus", "-", 
+    RowBox[{
+    "sigmoidal", " ", "curve", " ", "to", " ", "the", " ", "relationship", 
+     " ", "between", " ", "response", " ", "correlation", " ", "and", " ", 
+     "PFS"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"nh", "=", "2"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"model", "=", 
+     RowBox[{"b", "-", 
+      RowBox[{"h", "*", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"x", "+", "1"}], ")"}], "nh"], 
+        RowBox[{
+         SuperscriptBox[
+          RowBox[{"(", 
+           RowBox[{"x", "+", "1"}], ")"}], "nh"], "+", 
+         SuperscriptBox["k", "nh"]}]]}], "-", 
+      RowBox[{"m", "*", "x"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"sigmoidfit50", "=", 
+    RowBox[{"NonlinearModelFit", "[", 
+     RowBox[{"joinedcorrelations", ",", "model", ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"b", ",", "17"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"h", ",", "5"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"k", ",", "1"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"m", ",", "8"}], "}"}]}], "}"}], ",", "x"}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"Show", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"ListPlot", "[", 
+      RowBox[{"joinedcorrelations", ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "20"}], "}"}]}], ",", 
+       RowBox[{"PlotStyle", "\[Rule]", "Red"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"sigmoidfit50", "[", "x", "]"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"x", ",", 
+         RowBox[{"-", "1"}], ",", "1"}], "}"}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+       RowBox[{"PlotStyle", "\[Rule]", "Gray"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+     RowBox[{"FrameLabel", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<Response correlation\>\"", ",", "\"\<Median PFS\>\""}], 
+       "}"}]}]}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.681653625841344*^9, 3.681653634832858*^9}, 
+   3.681653762036134*^9, {3.681653802077424*^9, 3.6816538247547207`*^9}, {
+   3.681654600888113*^9, 3.6816546235144076`*^9}, {3.681654659772481*^9, 
+   3.681654666625873*^9}, {3.681654713588559*^9, 3.6816547176257906`*^9}, {
+   3.681654835332523*^9, 3.6816548490023046`*^9}, {3.681655926458932*^9, 
+   3.6816559587617793`*^9}, {3.682729322618862*^9, 3.6827293531546087`*^9}, {
+   3.683741757064116*^9, 3.683741893801937*^9}, {3.68374229369981*^9, 
+   3.683742299602147*^9}, {3.6840752102394543`*^9, 3.684075235820917*^9}, {
+   3.6840754846731505`*^9, 3.684075521155237*^9}, {3.68407559446043*^9, 
+   3.6840757049437494`*^9}, {3.6840758802867785`*^9, 3.6840759257783804`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{"Mono1Median", "=", 
+  RowBox[{"Quantile", "[", 
+   RowBox[{
+    RowBox[{"Mono1SurvivalDistribution", "\[LeftDoubleBracket]", 
+     RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", "0.5"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Mono2Median", "=", 
+  RowBox[{"Quantile", "[", 
+   RowBox[{
+    RowBox[{"Mono2SurvivalDistribution", "\[LeftDoubleBracket]", 
+     RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", "0.5"}], 
+   "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ComboMedian", "=", 
+  RowBox[{"Quantile", "[", 
+   RowBox[{
+    RowBox[{"ComboSurvivalDistribution", "\[LeftDoubleBracket]", 
+     RowBox[{"All", ",", "2"}], "\[RightDoubleBracket]"}], ",", "0.5"}], 
+   "]"}]}]}], "Input",
+ CellChangeTimes->{{3.6816549773706465`*^9, 3.681655002585089*^9}, 
+   3.683737119297851*^9}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"PFSvsCorrelationPlot", "=", 
+   RowBox[{"Plot", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"sigmoidfit50", "[", "x", "]"}], ",", "ComboMedian", ",", 
+       "Mono2Median", ",", "Mono1Median"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"x", ",", "0", ",", "1"}], "}"}], ",", 
+     RowBox[{"PlotStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"Directive", "[", 
+         RowBox[{"Black", ",", 
+          RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}], ",", 
+        RowBox[{"Directive", "[", 
+         RowBox[{
+          RowBox[{"Dashing", "[", 
+           RowBox[{"{", 
+            RowBox[{"0.05", ",", "0.05"}], "}"}], "]"}], ",", 
+          RowBox[{"ColorData", "[", 
+           RowBox[{"3", ",", "6"}], "]"}], ",", 
+          RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}], ",", 
+        RowBox[{"Directive", "[", 
+         RowBox[{
+          RowBox[{"Dashing", "[", 
+           RowBox[{"{", 
+            RowBox[{"0.05", ",", "0.05"}], "}"}], "]"}], ",", 
+          RowBox[{"ColorData", "[", 
+           RowBox[{"3", ",", "4"}], "]"}], ",", 
+          RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}], ",", 
+        RowBox[{"Directive", "[", 
+         RowBox[{
+          RowBox[{"Dashing", "[", 
+           RowBox[{"{", 
+            RowBox[{"0.05", ",", "0.05"}], "}"}], "]"}], ",", 
+          RowBox[{"RGBColor", "[", 
+           RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+          RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}]}], "}"}]}], 
+     ",", 
+     RowBox[{"Filling", "\[Rule]", "None"}], ",", 
+     RowBox[{"FillingStyle", "\[Rule]", 
+      RowBox[{"Directive", "[", 
+       RowBox[{
+        RowBox[{"ColorData", "[", 
+         RowBox[{"3", ",", "6"}], "]"}], ",", 
+        RowBox[{"Opacity", "[", "0.3", "]"}]}], "]"}]}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"-", "0.03"}], ",", "1.0"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"0", ",", "17"}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"Frame", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"True", ",", "True"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"FrameStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Directive", "[", 
+           RowBox[{"Black", ",", 
+            RowBox[{"Dashing", "[", 
+             RowBox[{"{", 
+              RowBox[{"1.01", ",", "1"}], "}"}], "]"}], ",", 
+            RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}], ",", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"White", ",", 
+            RowBox[{"Opacity", "[", "0", "]"}]}], "]"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Directive", "[", 
+           RowBox[{"Black", ",", 
+            RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}], ",", 
+          RowBox[{"Directive", "[", 
+           RowBox[{"Black", ",", 
+            RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], "}"}]}], 
+       "}"}]}], ",", 
+     RowBox[{"Axes", "\[Rule]", "False"}], ",", 
+     RowBox[{"BaseStyle", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+        RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+     RowBox[{"AspectRatio", "\[Rule]", 
+      RowBox[{"1", "*", 
+       RowBox[{"17", "/", "15"}]}]}], ",", 
+     RowBox[{"ImageSize", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", "1000", "}"}], ",", 
+        RowBox[{"{", "200", "}"}]}], "}"}]}], ",", 
+     RowBox[{"ImagePadding", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"50", ",", "40"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"50", ",", "10"}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"FrameTicks", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"i", ",", "i", ",", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0.035"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", "0", ",", "20", ",", "3"}], "}"}]}], "]"}], 
+          ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"Mono1Median", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{"ToString", "[", 
+                 RowBox[{"NumberForm", "[", 
+                  RowBox[{"Mono1Median", ",", 
+                   RowBox[{"{", 
+                    RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+                RowBox[{"RGBColor", "[", 
+                 RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+                RowBox[{"Opacity", "[", "1", "]"}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"Mono2Median", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{"ToString", "[", 
+                 RowBox[{"NumberForm", "[", 
+                  RowBox[{"Mono2Median", ",", 
+                   RowBox[{"{", 
+                    RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+                RowBox[{"ColorData", "[", 
+                 RowBox[{"3", ",", "4"}], "]"}], ",", 
+                RowBox[{"Opacity", "[", "1", "]"}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"ComboMedian", ",", 
+              RowBox[{"Style", "[", 
+               RowBox[{
+                RowBox[{"ToString", "[", 
+                 RowBox[{"NumberForm", "[", 
+                  RowBox[{"ComboMedian", ",", 
+                   RowBox[{"{", 
+                    RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+                RowBox[{"ColorData", "[", 
+                 RowBox[{"3", ",", "6"}], "]"}], ",", 
+                RowBox[{"Opacity", "[", "1", "]"}]}], "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0"}], "}"}]}], "}"}]}], "}"}]}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Join", "[", 
+            RowBox[{
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"N", "[", "i", "]"}], ",", "i", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0.04"}], "}"}]}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"-", "1"}], ",", "1", ",", 
+                 RowBox[{"1", "/", "2"}]}], "}"}]}], "]"}], ",", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"N", "[", "i", "]"}], ",", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0.02"}], "}"}]}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"-", "1"}], ",", "1", ",", 
+                 RowBox[{"1", "/", "10"}]}], "}"}]}], "]"}]}], "]"}], "/.", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"1", "/", "2"}], "\[Rule]", "\"\<0.5\>\""}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"-", "1"}], "/", "2"}], "\[Rule]", "\"\<-0.5\>\""}]}], 
+            "}"}]}], ",", "None"}], "}"}]}], "}"}]}], ",", 
+     RowBox[{"FrameLabel", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+       "\"\<Correlation in response, \[Rho] \>\"", ",", 
+        "\"\<Median PFS (months)\>\""}], "}"}]}], ",", 
+     RowBox[{"Epilog", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+        RowBox[{"AbsolutePointSize", "[", "7", "]"}], ",", 
+        RowBox[{"Point", "[", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", 
+           RowBox[{"sigmoidfit50", "[", "0", "]"}]}], "}"}], "]"}], ",", 
+        "Black", ",", 
+        RowBox[{"Point", "[", 
+         RowBox[{"{", 
+          RowBox[{"0.25", ",", 
+           RowBox[{"sigmoidfit50", "[", "0.25", "]"}]}], "}"}], "]"}], ",", 
+        RowBox[{"Dashing", "[", 
+         RowBox[{"{", 
+          RowBox[{"0.001", ",", "0.025"}], "}"}], "]"}], ",", 
+        RowBox[{"CapForm", "[", "\"\<Round\>\"", "]"}], ",", 
+        RowBox[{"AbsoluteThickness", "[", "1.5", "]"}], ",", 
+        RowBox[{"Line", "[", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"0.25", ",", 
+             RowBox[{"sigmoidfit50", "[", "0.25", "]"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"0.25", ",", "0"}], "}"}]}], "}"}], "]"}], ",", 
+        RowBox[{"Text", "[", 
+         RowBox[{
+          RowBox[{"ToString", "[", 
+           RowBox[{"NumberForm", "[", 
+            RowBox[{"Sim2Median", ",", 
+             RowBox[{"{", 
+              RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0.25", ",", 
+            RowBox[{
+             RowBox[{"sigmoidfit50", "[", "0.25", "]"}], "+", "0.2"}]}], 
+           "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.9"}], ",", 
+            RowBox[{"-", "1"}]}], "}"}]}], "]"}], ",", 
+        RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+        RowBox[{"Text", "[", 
+         RowBox[{
+          RowBox[{"ToString", "[", 
+           RowBox[{"NumberForm", "[", 
+            RowBox[{"Sim1Median", ",", 
+             RowBox[{"{", 
+              RowBox[{"3", ",", "1"}], "}"}]}], "]"}], "]"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0.", ",", 
+            RowBox[{
+             RowBox[{"sigmoidfit50", "[", "0.", "]"}], "+", "0.2"}]}], "}"}], 
+          ",", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.9"}], ",", 
+            RowBox[{"-", "1"}]}], "}"}]}], "]"}]}], "}"}]}]}], "]"}]}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+    "\"\<Figure 1C, Median PFS vs Correlation.pdf\>\""}], ",", 
+   "PFSvsCorrelationPlot", ",", "\"\<PDF\>\""}], "]"}]}], "Input",
+ CellChangeTimes->{{3.684543491717577*^9, 3.68454391986456*^9}, {
+   3.684544009496497*^9, 3.6845440489271717`*^9}, {3.6845440865830436`*^9, 
+   3.68454423002313*^9}, {3.6845443284447374`*^9, 3.6845444121496916`*^9}, {
+   3.6845444438696313`*^9, 3.6845444719757457`*^9}, {3.6845445052653165`*^9, 
+   3.6845446653732033`*^9}, {3.6845447166845293`*^9, 3.684544757796567*^9}, {
+   3.684544811153577*^9, 3.684544852097525*^9}, 3.6845448981612997`*^9, 
+   3.685654876415208*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"supplementary", " ", 
+     RowBox[{"figure", ":", " ", 
+      RowBox[{
+      "relationship", " ", "between", " ", "median", " ", "PFS", " ", "and", 
+       " ", "correlation"}]}]}], ",", " ", 
+    RowBox[{"showing", " ", "each", " ", "simulation", " ", "point"}]}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"Show", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Plot", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"sigmoidfit50", "[", "x", "]"}], ",", "ComboMedian", ",", 
+         "Mono2Median", ",", "Mono1Median"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"x", ",", "0", ",", "1"}], "}"}], ",", 
+       RowBox[{"PlotStyle", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Directive", "[", 
+           RowBox[{
+            RowBox[{"GrayLevel", "[", "0.25", "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}], ",", 
+          RowBox[{"Directive", "[", 
+           RowBox[{
+            RowBox[{"Dashing", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.04", ",", "0.05"}], "}"}], "]"}], ",", 
+            RowBox[{"ColorData", "[", 
+             RowBox[{"3", ",", "6"}], "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}], ",", 
+          RowBox[{"Directive", "[", 
+           RowBox[{
+            RowBox[{"Dashing", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.04", ",", "0.05"}], "}"}], "]"}], ",", 
+            RowBox[{"ColorData", "[", 
+             RowBox[{"3", ",", "4"}], "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}], ",", 
+          RowBox[{"Directive", "[", 
+           RowBox[{
+            RowBox[{"Dashing", "[", 
+             RowBox[{"{", 
+              RowBox[{"0.04", ",", "0.05"}], "}"}], "]"}], ",", 
+            RowBox[{"RGBColor", "[", 
+             RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+            RowBox[{"AbsoluteThickness", "[", "2", "]"}]}], "]"}]}], "}"}]}], 
+       ",", 
+       RowBox[{"Filling", "\[Rule]", "None"}], ",", 
+       RowBox[{"FillingStyle", "\[Rule]", 
+        RowBox[{"Directive", "[", 
+         RowBox[{
+          RowBox[{"ColorData", "[", 
+           RowBox[{"3", ",", "6"}], "]"}], ",", 
+          RowBox[{"Opacity", "[", "0.3", "]"}]}], "]"}]}], ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "0.03"}], ",", "1.0"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "15"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{"Frame", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"True", ",", "False"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{"FrameStyle", "\[Rule]", 
+        RowBox[{"Directive", "[", 
+         RowBox[{"Black", ",", 
+          RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+       RowBox[{"Axes", "\[Rule]", "False"}], ",", 
+       RowBox[{"BaseStyle", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+          RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "1"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", "1000", "}"}], ",", 
+          RowBox[{"{", "170", "}"}]}], "}"}]}], ",", 
+       RowBox[{"ImagePadding", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"45", ",", "10"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"45", ",", "10"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{"FrameTicks", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Join", "[", 
+            RowBox[{
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"N", "[", "i", "]"}], ",", "i", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0.04"}], "}"}]}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"-", "1"}], ",", "1", ",", 
+                 RowBox[{"1", "/", "2"}]}], "}"}]}], "]"}], ",", 
+             RowBox[{"Table", "[", 
+              RowBox[{
+               RowBox[{"{", 
+                RowBox[{
+                 RowBox[{"N", "[", "i", "]"}], ",", ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0.025"}], "}"}]}], "}"}], ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"-", "1"}], ",", "1", ",", 
+                 RowBox[{"1", "/", "10"}]}], "}"}]}], "]"}]}], "]"}], "/.", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"1", "/", "2"}], "\[Rule]", "\"\<0.5\>\""}], ",", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"-", "1"}], "/", "2"}], "\[Rule]", "\"\<-0.5\>\""}]}], 
+            "}"}]}], ",", 
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"i", ",", "i", ",", 
+              RowBox[{"{", 
+               RowBox[{"0", ",", "0.035"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", "0", ",", "20", ",", "3"}], "}"}]}], "]"}]}], 
+         "}"}]}], ",", 
+       RowBox[{"FrameLabel", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Correlation in response \>\"", ",", 
+          "\"\<Median PFS (months)\>\""}], "}"}]}]}], "]"}], 
+     "\[IndentingNewLine]", ",", "\[IndentingNewLine]", 
+     RowBox[{"ListPlot", "[", 
+      RowBox[{"manycorrelations", ",", 
+       RowBox[{"PlotRange", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "1"}], ",", "1"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", "18"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{"Epilog", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Dashing", "[", 
+           RowBox[{"{", 
+            RowBox[{"0.05", ",", "0.03"}], "}"}], "]"}], ",", 
+          RowBox[{"ColorData", "[", 
+           RowBox[{"3", ",", "6"}], "]"}], ",", 
+          RowBox[{"AbsoluteThickness", "[", "2", "]"}], ",", 
+          RowBox[{"Line", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "1"}], ",", "ComboMedian"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"1", ",", "ComboMedian"}], "}"}]}], "}"}], "]"}], ",", 
+          RowBox[{"ColorData", "[", 
+           RowBox[{"3", ",", "4"}], "]"}], ",", 
+          RowBox[{"Line", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "1"}], ",", "Mono2Median"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"1", ",", "Mono2Median"}], "}"}]}], "}"}], "]"}], ",", 
+          RowBox[{"RGBColor", "[", 
+           RowBox[{"0.8", ",", "0.1", ",", "0.6"}], "]"}], ",", 
+          RowBox[{"Line", "[", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{
+               RowBox[{"-", "1"}], ",", "Mono1Median"}], "}"}], ",", 
+             RowBox[{"{", 
+              RowBox[{"1", ",", "Mono1Median"}], "}"}]}], "}"}], "]"}]}], 
+         "}"}]}], ",", 
+       RowBox[{"PlotStyle", "\[Rule]", 
+        RowBox[{"Directive", "[", 
+         RowBox[{
+          RowBox[{"GrayLevel", "[", "0.5", "]"}], ",", 
+          RowBox[{"Opacity", "[", "0.7", "]"}], ",", 
+          RowBox[{"AbsolutePointSize", "[", "3", "]"}]}], "]"}]}], ",", 
+       RowBox[{"Frame", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"True", ",", "False"}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"True", ",", "False"}], "}"}]}], "}"}]}], ",", 
+       RowBox[{"FrameStyle", "\[Rule]", 
+        RowBox[{"Directive", "[", 
+         RowBox[{"Black", ",", 
+          RowBox[{"Thickness", "[", "Medium", "]"}]}], "]"}]}], ",", 
+       RowBox[{"Axes", "\[Rule]", "False"}], ",", 
+       RowBox[{"BaseStyle", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"FontFamily", "\[Rule]", "\"\<Arial\>\""}], ",", 
+          RowBox[{"FontSize", "\[Rule]", "12"}]}], "}"}]}], ",", 
+       RowBox[{"AspectRatio", "\[Rule]", "1"}], ",", 
+       RowBox[{"ImageSize", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"{", "1000", "}"}], ",", 
+          RowBox[{"{", "200", "}"}]}], "}"}]}], ",", 
+       RowBox[{"FrameTicks", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"i", ",", "i", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.02", ",", "0"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", 
+              RowBox[{"-", "1"}], ",", "1", ",", 
+              RowBox[{"1", "/", "2"}]}], "}"}]}], "]"}], ",", 
+          RowBox[{"Table", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"i", ",", "i", ",", 
+              RowBox[{"{", 
+               RowBox[{"0.02", ",", "0"}], "}"}]}], "}"}], ",", 
+            RowBox[{"{", 
+             RowBox[{"i", ",", "0", ",", "20", ",", "3"}], "}"}]}], "]"}]}], 
+         "}"}]}], ",", 
+       RowBox[{"FrameLabel", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+         "\"\<Correlation in response\>\"", ",", "\"\<Median PFS\>\""}], 
+         "}"}]}]}], "]"}]}], "\[IndentingNewLine]", "]"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"Export", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\<Supplementary Figure S10, Median PFS vs Correlation.pdf\>\""}], 
+     ",", "%", ",", "\"\<PDF\>\""}], "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.681651994894059*^9, 3.681651998336256*^9}, {
+   3.681652039568614*^9, 3.6816520475780725`*^9}, {3.681652212704517*^9, 
+   3.6816522791533175`*^9}, {3.6816524483929977`*^9, 
+   3.6816524637038736`*^9}, {3.681652510288538*^9, 3.6816525472106495`*^9}, {
+   3.6816525877539687`*^9, 3.6816526930759926`*^9}, {3.6816527535624523`*^9, 
+   3.6816528745323715`*^9}, {3.6816530654052887`*^9, 
+   3.6816530654742928`*^9}, {3.68165325844233*^9, 3.681653311123343*^9}, {
+   3.6816538505001936`*^9, 3.681653969432996*^9}, {3.6816548822852087`*^9, 
+   3.6816549202763815`*^9}, {3.681655045246529*^9, 3.681655086988917*^9}, 
+   3.6816551894947796`*^9, {3.6816554088933287`*^9, 3.6816554291184855`*^9}, {
+   3.681657055758524*^9, 3.6816570759326777`*^9}, {3.682729464492007*^9, 
+   3.6827295058022285`*^9}, {3.6837423301088924`*^9, 
+   3.6837424256603575`*^9}, {3.6840759625274825`*^9, 
+   3.6840759801384897`*^9}, {3.685654077414607*^9, 3.6856540775026116`*^9}, {
+   3.685654879746213*^9, 3.685654880366214*^9}}]
+}, Open  ]]
+}, Open  ]]
+},
+PrintingStyleEnvironment->"Working",
+WindowSize->{1920, 998},
+WindowMargins->{{-8, Automatic}, {Automatic, -8}},
+PrintingCopies->1,
+PrintingPageRange->{32000, 32000},
+PrintingOptions->{"Magnification"->1.,
+"PaperOrientation"->"Portrait",
+"PaperSize"->{841.8, 1190.52},
+"PrintCellBrackets"->False,
+"PrintMultipleHorizontalPages"->False,
+"PrintRegistrationMarks"->False,
+"PrintingMargins"->36},
+FrontEndVersion->"11.0 for Microsoft Windows (64-bit) (July 28, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 121, 1, 70, "Section"],
+Cell[CellGroupData[{
+Cell[704, 25, 851, 17, 129, "Title"],
+Cell[CellGroupData[{
+Cell[1580, 46, 276, 3, 70, "Section"],
+Cell[1859, 51, 623, 13, 30, "Input"],
+Cell[2485, 66, 1489, 31, 88, "Input"],
+Cell[3977, 99, 104, 1, 39, "Subsubsection"],
+Cell[CellGroupData[{
+Cell[4106, 104, 350, 4, 39, "Subsection"],
+Cell[4459, 110, 1708, 38, 88, "Input"],
+Cell[6170, 150, 1617, 33, 69, "Input"],
+Cell[7790, 185, 1761, 42, 69, "Input"],
+Cell[9554, 229, 1388, 30, 50, "Input"],
+Cell[10945, 261, 692, 16, 50, "Input"],
+Cell[11640, 279, 1564, 34, 107, "Input"],
+Cell[13207, 315, 1693, 49, 107, "Input"],
+Cell[14903, 366, 155, 2, 39, "Subsubsection"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15095, 373, 402, 5, 47, "Subsection"],
+Cell[15500, 380, 1847, 41, 107, "Input"],
+Cell[17350, 423, 1757, 36, 69, "Input"],
+Cell[19110, 461, 1922, 44, 69, "Input"],
+Cell[21035, 507, 1536, 31, 50, "Input"],
+Cell[22574, 540, 747, 17, 50, "Input"],
+Cell[23324, 559, 1765, 37, 107, "Input"],
+Cell[25092, 598, 825, 23, 50, "Input"],
+Cell[25920, 623, 114, 1, 30, "Input"],
+Cell[26037, 626, 924, 23, 50, "Input"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[27010, 655, 529, 7, 70, "Section"],
+Cell[27542, 664, 729, 15, 30, "Input"],
+Cell[28274, 681, 1125, 24, 50, "Input"],
+Cell[29402, 707, 1824, 35, 50, "Input"],
+Cell[31229, 744, 344, 8, 30, "Input"],
+Cell[31576, 754, 3330, 83, 88, "Input"],
+Cell[34909, 839, 3243, 71, 202, "Input"],
+Cell[38155, 912, 2428, 58, 69, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[40620, 975, 574, 7, 70, "Section"],
+Cell[41197, 984, 778, 15, 30, "Input"],
+Cell[41978, 1001, 1174, 25, 50, "Input"],
+Cell[43155, 1028, 1873, 36, 50, "Input"],
+Cell[45031, 1066, 392, 8, 30, "Input"],
+Cell[45426, 1076, 3352, 83, 88, "Input"],
+Cell[48781, 1161, 3269, 72, 202, "Input"],
+Cell[52053, 1235, 2454, 59, 69, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[54544, 1299, 629, 8, 70, "Section"],
+Cell[55176, 1309, 834, 16, 30, "Input"],
+Cell[56013, 1327, 1225, 26, 50, "Input"],
+Cell[57241, 1355, 1924, 37, 50, "Input"],
+Cell[59168, 1394, 445, 9, 30, "Input"],
+Cell[59616, 1405, 3374, 83, 88, "Input"],
+Cell[62993, 1490, 3291, 72, 202, "Input"],
+Cell[66287, 1564, 2478, 59, 69, "Input"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[68814, 1629, 270, 5, 101, "Title"],
+Cell[CellGroupData[{
+Cell[69109, 1638, 700, 10, 46, "Subsubsection"],
+Cell[69812, 1650, 1612, 36, 69, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[71461, 1691, 767, 13, 130, "Subsubsection"],
+Cell[72231, 1706, 9069, 194, 278, "Input"],
+Cell[81303, 1902, 3891, 90, 164, "Input"],
+Cell[85197, 1994, 829, 20, 50, "Input"],
+Cell[86029, 2016, 1733, 40, 126, "Input"],
+Cell[87765, 2058, 16768, 419, 430, "Input"],
+Cell[104536, 2479, 14534, 361, 468, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[119107, 2845, 242, 3, 70, "Section"],
+Cell[119352, 2850, 5157, 118, 259, "Input"],
+Cell[124512, 2970, 4702, 110, 259, "Input"],
+Cell[129217, 3082, 1389, 30, 52, "Input"],
+Cell[130609, 3114, 859, 22, 52, "Input"],
+Cell[131471, 3138, 250, 6, 30, "Input"],
+Cell[131724, 3146, 3032, 72, 208, "Input"],
+Cell[134759, 3220, 833, 20, 69, "Input"],
+Cell[135595, 3242, 10977, 279, 259, "Input"],
+Cell[146575, 3523, 11125, 275, 297, "Input"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+

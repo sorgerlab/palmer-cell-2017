@@ -1,0 +1,2 @@
+This notebook is fully self-contained and does not require any data files as input.
+It can be executed by loading the notebook in Wolfram Mathematica v11.0, and selecting 'Evaluate Notebook' from the 'Evaluation' menu.
